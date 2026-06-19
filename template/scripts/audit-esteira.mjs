@@ -7,8 +7,19 @@ import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, dirname, relative, resolve, extname } from "node:path";
 
 const ROOT = resolve(process.argv[2] || ".");
-const IGNORE_DIRS = new Set(["node_modules", ".git"]);
+// Dirs de views geradas pela CLI (clientes não-Claude) — são artefatos derivados da fonte
+// canônica (.claude/CLAUDE.md), não a fonte; auditar a fonte basta e evita falso-positivo.
+const IGNORE_DIRS = new Set([
+  "node_modules", ".git", ".spec-driven",
+  ".agents", ".cursor", ".gemini", ".windsurf",
+]);
 const NO_FRONTMATTER_OK = new Set(["RELEASING.md", "CHANGELOG.md"]);
+// Arquivos de instruções gerados (fora de um dir próprio) que também são views derivadas.
+const isGenerated = (f) => {
+  const r = relative(ROOT, f).replace(/\\/g, "/");
+  return r === "AGENTS.md" || r === "GEMINI.md" ||
+    r === ".github/copilot-instructions.md" || r.startsWith(".github/prompts/");
+};
 const errors = [];
 const err = (file, msg) => errors.push(`${relative(ROOT, file) || file}: ${msg}`);
 
@@ -40,7 +51,7 @@ const isSkillDialect = (f) =>
   f.replace(/\\/g, "/").includes("/.claude/skills/") ||
   /(?:^|\/)(skill|subagent)\.template\.md$/.test(f.replace(/\\/g, "/"));
 
-const files = walk(ROOT);
+const files = walk(ROOT).filter((f) => !isGenerated(f));
 
 // 1) Frontmatter + dialeto
 for (const f of files) {
