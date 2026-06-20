@@ -55,7 +55,7 @@ seu-projeto/
 ├── .claude/skills/            # 14 skills (ver abaixo) — + as views dos clientes extras escolhidos
 ├── .spec-driven/manifest.json # quais clientes foram gerados (usado pelo update)
 ├── .github/workflows/         # esteira.yml — gate de conformidade na CI
-├── scripts/                   # audit-esteira.mjs + eval-spec-fidelity.mjs
+├── scripts/                   # audit-esteira.mjs + validate-mermaid.mjs + eval-spec-fidelity.mjs
 ├── docs/
 │   ├── glossary.md · STATE.md
 │   ├── product/               # vision · stakeholders · journeys · features · mvp-canvas · roadmap

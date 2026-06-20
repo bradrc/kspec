@@ -1,6 +1,6 @@
 {
   "name": "@igoruehara/spec-driven",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Scaffold de Spec-Driven Development (SDD) para agentes de IA (Claude Code, Codex, Cursor, Copilot, Gemini, Windsurf) — esteira Lean Inception + DDD + Technical Design Docs, com skills, templates e gates de qualidade. Use via npx em qualquer projeto.",
   "type": "module",
   "bin": {
@@ -46,7 +46,7 @@
   },
   "scripts": {
     "pack:check": "npm pack --dry-run",
-    "test:scaffold": "node bin/cli.mjs .tmp-scaffold-test --yes",
-    "prepublishOnly": "node bin/cli.mjs .tmp-scaffold-test --yes"
+    "test:scaffold": "node bin/cli.mjs .tmp-scaffold-test --all --force --yes",
+    "prepublishOnly": "node bin/cli.mjs .tmp-scaffold-test --all --force --yes"
   }
 }

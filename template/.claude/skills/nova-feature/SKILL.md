@@ -47,6 +47,8 @@ Para cada artefato do tier, rascunhe a partir do template e **pare no gate para 
    Atualize `docs/glossary.md` e `docs/architecture/context-map.md` se surgirem termos/fronteiras.
 4. **`spec.md`** (sempre) — critérios de aceite em Given/When/Then, casos de borda, fora de escopo.
    Gate **Definition of Ready**: cada AC é testável e não-ambíguo? Se houver `spec-reviewer`, use-o.
+   **Regra que combina vários fatores** (flags, estados, modos)? Use a **Matriz de decisão** do
+   template — tabela-verdade é mais densa e barata em tokens que prosa, e cada linha vira teste.
 5. **`tasks.md`** (sempre) — decomponha em tasks, cada uma mapeando para um ou mais AC + plano de teste.
 
 ## Fase 4 — Quebra de tasks e tracking

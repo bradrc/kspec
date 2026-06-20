@@ -36,5 +36,10 @@ nunca classes, tabelas ou detalhe de implementação (isso é escopo do `design.
 
 ## Regras
 - **Alto nível only.** Pediram detalhe de classe/tabela? Diga que é escopo do `design.md`.
-- Valide a sintaxe Mermaid (chaves, setas, aspas) antes de salvar.
+- **Valide a sintaxe antes de entregar** — rode o gate determinístico (não confie só no olho):
+  ```
+  node scripts/validate-mermaid.mjs .
+  ```
+  Pega bloco vazio, tipo de diagrama ausente/desconhecido e aspas/delimitadores desbalanceados.
+  Corrija os erros antes de salvar; é o mesmo gate que roda na CI (`esteira.yml`).
 - Não invente componentes que não estão nos insumos — pergunte (ver verificação de conhecimento no `CLAUDE.md`).

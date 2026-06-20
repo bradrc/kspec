@@ -38,10 +38,22 @@ responde 429 com headers de cota até a janela reiniciar.
 - **Então** a requisição é aceita (fail-open)
 - **E** um alerta de degradação é emitido
 
+## Matriz de decisão
+> Como a checagem combina flag + modo + estado do contador, a tabela-verdade resolve a
+> combinatória sem prosa. Cada linha é um caso de teste; AC-3 (reinício da janela) é temporal
+> e fica nos critérios acima.
+
+| `usage_quota_enabled` | Modo | Uso vs cota | Contador (Redis) | Resultado | AC |
+|---|---|---|---|---|---|
+| `false` | — | — | — | Aceita; checagem pulada | borda |
+| `true` | shadow | estourou | ok | Aceita + emite métrica; **não** bloqueia | borda |
+| `true` | normal | dentro | ok | Aceita + `X-Quota-Remaining` | AC-1 |
+| `true` | normal | estourou | ok | `429` + `Retry-After` + evento `QuotaExceeded` | AC-2 |
+| `true` | normal | — | indisponível | Aceita (fail-open) + alerta de degradação | AC-4 |
+
 ## Casos de borda e erros
 - Cota configurada como 0 ou negativa → rejeitada na validação do domínio (config inválida).
-- Flag `usage_quota_enabled=false` para a org → checagem é pulada, sempre aceita.
-- Modo shadow → conta o uso e emite métricas, mas nunca bloqueia.
+- Demais combinações de flag/modo/contador: ver a **matriz de decisão** acima.
 
 ## Fora de escopo
 - Cobrança por excedente.

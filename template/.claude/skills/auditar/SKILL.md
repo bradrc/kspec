@@ -9,12 +9,14 @@ Verifica se o projeto respeita o padrão da esteira. Duas camadas: **estrutural*
 e **semântica** (julgamento do agente).
 
 ## 1. Checagem estrutural (determinística)
-Rode o validador e reporte a saída:
+Rode os validadores e reporte a saída:
 ```
 node scripts/audit-esteira.mjs .
+node scripts/validate-mermaid.mjs .
 ```
-Cobre: frontmatter presente + dialeto certo (`alwaysApply` nos docs; `name`+`description` nas
-skills), links relativos quebrados e toda `specs/NNNN-*/` com `spec.md`. Exit ≠ 0 = falhou.
+O primeiro cobre: frontmatter presente + dialeto certo (`alwaysApply` nos docs; `name`+`description`
+nas skills), links relativos quebrados e toda `specs/NNNN-*/` com `spec.md`. O segundo valida os
+blocos Mermaid (tipo, aspas, delimitadores). Exit ≠ 0 em qualquer um = falhou.
 
 ## 2. Checagem semântica (julgamento)
 O script não pega tudo. Verifique também:

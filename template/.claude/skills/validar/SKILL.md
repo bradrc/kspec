@@ -13,6 +13,8 @@ inspeção. Rode depois de implementar (pode ser em outra sessão).
 2. **Rode os gates** de `docs/engineering/TESTING.md` (e os comandos da coluna Gate do `tasks.md`). O `/verify`
    embutido do Claude Code ajuda a validar comportamento real.
 3. **Mapeie `AC-N → teste`** e mostre a tabela; **aponte qualquer AC sem cobertura** ou falhando.
+   Se a spec tem **Matriz de decisão**, cada linha é um caso de teste: confira que **toda linha**
+   tem teste correspondente (combinações são onde mais escapa bug).
 4. **SPEC_DEVIATION:** resolva os pendentes — ou corrige o código (a spec vence) ou atualiza a
    spec conscientemente (e registra ADR se for difícil de reverter).
 5. **Definition of Done** (ver `README.md` / `CLAUDE.md`): AC verdes pelo gate, sem deviation
