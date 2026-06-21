@@ -81,7 +81,8 @@ Um lote de `AskUserQuestion` por eixo. Proponha defaults sensatos.
 2. **Arquitetura base** — estilo (monolito modular / serviços / serverless), camadas DDD
    (default do boilerplate), e os **bounded contexts** (do MVP no greenfield; validados no brownfield).
 3. **Infra** — cloud, modelo de deploy, ambientes, CI/CD, IaC.
-4. **Qualidade** — pirâmide de testes, cobertura mínima, lint/format, política de review, DoD.
+4. **Qualidade** — pirâmide de testes, cobertura mínima, lint/format, **análise estática** (type-check,
+   complexidade, SAST/segurança — o que é bloqueante vs aviso), política de review, DoD.
 5. **Observabilidade** — logs estruturados, métricas, tracing, alertas, SLO/SLI iniciais.
 
 ## Fase 3 — Confirmação

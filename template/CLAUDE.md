@@ -109,6 +109,8 @@ Se durante a implementação você precisar fazer diferente do que a `spec.md` d
 ## Definition of Done
 - [ ] Todos os critérios de aceite da `spec.md` passam — **verificados pelo gate executável**
       (o comando de teste em `tasks.md`), não por inspeção visual
+- [ ] **Cobertura ≥ mínimo** do projeto, com o **relatório anexado ao PR** (evidência, não inspeção)
+- [ ] **Análise estática limpa** (type-check + complexidade + SAST) — sem findings bloqueantes
 - [ ] Nenhum `SPEC_DEVIATION` pendente sem resolução
 - [ ] Decisões difíceis de reverter viraram ADR em `docs/architecture/adr/`
 - [ ] Glossário e `docs/architecture/context-map.md` atualizados se mudaram

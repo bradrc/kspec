@@ -24,7 +24,7 @@ alwaysApply: false
 - Decisão: [ADR-XXXX](adr/XXXX-infra-e-deploy.md) · Operacional: ver seção 7.
 
 ## 4. Qualidade
-<Estratégia de testes (pirâmide), cobertura mínima, lint/format, política de review.>
+<Estratégia de testes (pirâmide), cobertura mínima, lint/format, análise estática (type-check/complexidade/SAST), política de review.>
 - Comandos e gates: [TESTING.md](../engineering/TESTING.md)
 
 ## 5. Observabilidade

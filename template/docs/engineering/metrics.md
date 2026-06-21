@@ -1,6 +1,6 @@
 ---
 name: metrics
-description: Métricas de entrega — Lead Time, Throughput e maturidade de Continuous Delivery/Deployment. Puxe ao revisar o fluxo ou planejar. Atualizado por /metricas.
+description: Métricas de entrega — Lead Time, Throughput, maturidade de Continuous Delivery/Deployment e qualidade de código (cobertura, análise estática). Puxe ao revisar o fluxo ou planejar. Atualizado por /metricas.
 alwaysApply: false
 ---
 
@@ -40,3 +40,21 @@ alwaysApply: false
 
 - **Deployment Frequency:** <nº de deploys no período>.
 - Próximo passo de automação: `/setup-ci`.
+
+## Qualidade de código
+> Evidência rastreável do **resultado**: cobertura e análise estática. Tendência, não número isolado.
+> Fonte: artefatos da CI (ver `/setup-ci`). Bloqueante barra o merge (ver `engineering/TESTING.md`).
+
+### Cobertura
+| Escopo            | Atual | Mínimo | Tendência   |
+|-------------------|-------|--------|-------------|
+| Global            | <X%>  | <Y%>   | <↑ / → / ↓> |
+| <módulo / camada> | <X%>  | —      | <↑ / → / ↓> |
+
+### Análise estática
+| Categoria                 | Findings | Bloqueantes | Tendência   |
+|---------------------------|----------|-------------|-------------|
+| Type-check                | <n>      | <n>         | <↑ / → / ↓> |
+| Complexidade / smells     | <n>      | <n>         | <↑ / → / ↓> |
+| Segurança (SAST)          | <n>      | <n>         | <↑ / → / ↓> |
+| Duplicação                | <n>      | —           | <↑ / → / ↓> |

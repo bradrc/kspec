@@ -54,7 +54,7 @@ Alimenta o `docs/engineering/TESTING.md`.>
 | Tech stack      | <…>                           | <…>                      | baixo/médio/alto |
 | Arquitetura     | <…>                           | <…>                      |       |
 | Infra           | <…>                           | <…>                      |       |
-| Qualidade       | <testes? cobertura? CI?>      | <…>                      |       |
+| Qualidade       | <testes? cobertura? análise estática? CI?> | <…>         |       |
 | Observabilidade | <logs/métricas/tracing/SLO?>  | <…>                      |       |
 
 ## Dívidas e riscos principais
