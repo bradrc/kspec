@@ -24,6 +24,8 @@ ordem dos gates e pare em cada um para review. Siga as convenções do `CLAUDE.m
 3. **(tools-aware) Importar contexto:** se Jira/Linear estiver conectado, pergunte se a feature
    tem uma story/épico. Se sim, leia a issue e use para semear `product.md`; guarde a chave na
    frontmatter (`jira: PROJ-123`). Se Confluence/Notion estiver conectado, puxe páginas relacionadas.
+   **Se nada de gestão/doc estiver conectado** e o usuário quiser puxar insumo, **ofereça rodar
+   `/integracoes` agora** (neutro — deixe-o dizer o que usa); se recusar, siga sem e registre a pendência.
 
 ## Fase 2 — Decidir o tier
 Pergunte (gate): **"isso introduz decisão difícil de reverter ou nova fronteira de domínio?"**
@@ -55,7 +57,8 @@ Para cada artefato do tier, rascunhe a partir do template e **pare no gate para 
 1. Preencha a tabela de `tasks.md` (task → cobre AC → depende de → status).
 2. **(tools-aware) Criar issues:** se Jira/Linear estiver conectado, ofereça criar uma issue/subtask
    por task (confirme antes). Escrita é **uma via** (repo → ferramenta); grave o mapeamento
-   `task # ↔ issue key` no `tasks.md`. Se não houver MCP, deixe a coluna para preencher à mão.
+   `task # ↔ issue key` no `tasks.md`. **Se não houver MCP de gestão**, ofereça rodar `/integracoes`
+   para conectar agora; se o usuário recusar, deixe a coluna para preencher à mão.
 
 ## Fase 5 — Pronto para implementar
 - Cheque o **Definition of Ready** (ver `README.md`): AC testáveis, non-goals, termos no glossário,

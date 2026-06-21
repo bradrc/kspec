@@ -36,6 +36,17 @@ Antes de afirmar como algo funciona, siga esta ordem — pare assim que tiver a 
 5. **Não encontrou? Diga "não sei" e sinalize.** Nunca invente API, padrão ou comportamento —
    inventar causa falha em cascata. Incerteza explícita é melhor que um chute confiante.
 
+## Ferramentas conectadas (MCP)
+> **Mantido pela skill `/integracoes`.** Lista os MCP servers validados e quem os consome, para o
+> roteamento de skills/rules. Vazio até a primeira conexão — rode `/integracoes` para preencher.
+
+| MCP (`mcp__<servidor>__*`) | Conta/workspace validada | Skills que consomem |
+|---|---|---|
+| _nenhum ainda_ | — | — |
+
+Regra: conexão ativa **não** autoriza uso. Confirme a conta/workspace antes de ler e **reconfirme
+antes de qualquer escrita** (ver `/integracoes`). Só use um MCP presente na sessão (`mcp__<servidor>__*`).
+
 ## Antes de codar — descubra o tier
 Pergunta: *isso introduz decisão difícil de reverter ou nova fronteira de domínio?*
 - **Trivial** (≤3 arquivos, sem decisão): só o PR (ou `quick/` se quiser deixar rastro).

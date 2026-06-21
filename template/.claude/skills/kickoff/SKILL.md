@@ -12,8 +12,9 @@ o trabalho para um projeto que está *começando* é diferente do de um projeto 
 - **Pergunte em lotes curtos** com `AskUserQuestion` (máx. 4 perguntas, 2-4 opções cada).
   Ofereça sempre um default "(Recomendado)" como primeira opção; aceite "Other" livre.
 - **Não invente decisões de arquitetura.** Você propõe opções com trade-offs; quem decide é o usuário.
-- **Não pergunte ferramentas/MCPs aqui** — isso é a skill `/integracoes`. Se ela já rodou, aproveite
-  os insumos puxados; senão, siga sem e deixe `/integracoes` como item do roadmap.
+- **Não levante nem proponha ferramentas aqui** — isso é a skill `/integracoes`. O kickoff só faz a
+  **oferta neutra** (Fase 0.5) de conectar. Se a `/integracoes` já rodou, aproveite os insumos puxados;
+  senão, siga sem e deixe `/integracoes` como item do roadmap.
 - Confirme um resumo antes de gerar arquivos. Gere tudo de uma vez no fim.
 - O objetivo final dos dois caminhos é o mesmo: **a constituição do projeto + um roadmap
   acionável para rodar com o time.**
@@ -27,14 +28,21 @@ o trabalho para um projeto que está *começando* é diferente do de um projeto 
    **Híbrido** (base existe, mas vamos repensar). Roteie conforme a resposta.
 3. Leia `README.md` e `CLAUDE.md` para alinhar com a esteira SDD.
 
-## Integrações são uma skill separada — `/integracoes`
-Levantar ferramentas e conectar MCPs é **ortogonal** ao kickoff (você pode não conhecer o
-ferramental ainda). **Não pergunte ferramentas aqui.**
-- **Ideal (read-first):** se o time já conhece as ferramentas, rode **`/integracoes` antes** — os
-  MCPs de leitura (Confluence/Jira) alimentam os artefatos com dado real. Se já rodou, **use os
-  insumos puxados** (cite a origem) nas fases abaixo.
-- **Se ainda não conhece o ferramental:** siga o kickoff só com a entrevista e deixe `/integracoes`
-  como item do roadmap de adoção.
+## Fase 0.5 — Oferta de integração (neutra)
+Conectar MCPs é **ortogonal** ao kickoff e é trabalho da skill `/integracoes`. Aqui você faz só
+**uma oferta neutra** — **não liste nem proponha ferramentas** (quem levanta o ferramental é a
+`/integracoes`; deixe o usuário dizer o que usa de fato lá).
+
+Pergunte com `AskUserQuestion` (uma pergunta, **sem citar nomes de ferramenta**):
+> *"Quer conectar suas ferramentas via MCP agora? Conectar antes deixa os artefatos com dado real
+> (read-first)."* — opções: **Conectar agora (recomendado)** · **Seguir e conectar depois** · **Já conectei**.
+
+- **Conectar agora →** rode **`/integracoes`** e retome o kickoff com os insumos puxados (cite a origem nas fases).
+- **Conectar depois →** siga só com a entrevista; `/integracoes` vira item do roadmap de adoção (Fase 5).
+- **Já conectei →** **use os insumos puxados** (cite a origem) nas fases abaixo.
+
+> A `/integracoes` é **re-executável**. Mais adiante, se uma ferramenta passar a ajudar (puxar épico,
+> ler PR), **reofereça-a** no ponto em que o valor aparece — não precisa ser só aqui.
 
 ---
 

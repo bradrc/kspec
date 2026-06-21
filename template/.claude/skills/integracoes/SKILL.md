@@ -1,6 +1,6 @@
 ---
 name: integracoes
-description: Use para levantar as ferramentas do time (Jira, Confluence, Notion, GitHub, cloud, observabilidade), conectar os MCPs com segurança, puxar insumos de leitura e definir os fluxos de escrita (repo → ferramenta). Gera docs/engineering/integrations.md e, se aprovado, .mcp.json. Rode ANTES do /kickoff para alimentar os artefatos com dado real (read-first), ou DEPOIS, quando o ferramental ficar conhecido. Re-executável. Acione com /integracoes.
+description: Use para levantar as ferramentas do time (Jira, Confluence, Notion, GitHub, cloud, observabilidade), conectar os MCPs com segurança, puxar insumos de leitura e definir os fluxos de escrita (repo → ferramenta). Gera docs/engineering/integrations.md e, se aprovado, .mcp.json, e registra os MCPs validados no roteamento (bloco "Ferramentas conectadas (MCP)" do CLAUDE.md + skills tools-aware). Rode ANTES do /kickoff para alimentar os artefatos com dado real (read-first), ou DEPOIS, quando o ferramental ficar conhecido. Re-executável. Acione com /integracoes.
 ---
 
 # Skill: Integrações e MCPs do time
@@ -67,7 +67,20 @@ A partir de `docs/engineering/_templates/integrations.template.md`: ferramentas,
 fluxos read/write e status. Se o kickoff já rodou e você puxou insumos novos, ofereça enriquecer
 `context-map.md` / `glossary.md` / `assessment.md` com o que encontrou (citando origem).
 
+## Fase 5 — Registrar no roteamento (rules + skills)
+Conexão validada **não basta**: o resto da esteira precisa **saber** que ela existe e quem a usa.
+1. **CLAUDE.md (rules):** atualize o bloco **"Ferramentas conectadas (MCP)"** com os servidores
+   validados — `mcp__<servidor>__*`, conta/workspace e quais skills consomem cada um. Como o
+   `CLAUDE.md` é `alwaysApply: true`, toda sessão passa a carregar esse roteamento.
+2. **Skills (roteamento):** confirme que as skills tools-aware apontam para os MCPs certos —
+   `/nova-feature` (Jira/Linear/Confluence/Notion), `/revisar-pr` (GitHub/GitLab), `/publicar-*`
+   (Confluence/Notion). Não duplique lógica: as skills checam `mcp__<servidor>__*` em runtime.
+3. **Camada agêntica:** se as novas ferramentas pedem artefatos novos (skill `/spec-to-jira`,
+   subagente, hook de publicação), **delegue à `/camada-agentica`** (propõe com justificativa, gera
+   só o aprovado). Itens não aprovados viram roadmap de adoção.
+
 ## Fechamento
-- Resuma com links clicáveis.
+- Resuma com links clicáveis e liste os MCPs que entraram no roteamento (`CLAUDE.md`).
 - Próximo passo: se o `/kickoff` ainda não rodou, sugira rodá-lo agora (com os MCPs de leitura já
-  conectados, os artefatos saem com dado real). Senão, aponte `/nova-feature`.
+  conectados, os artefatos saem com dado real). Senão, aponte `/nova-feature`. Se registrou
+  ferramentas novas, considere `/camada-agentica` para afinar a esteira a elas.

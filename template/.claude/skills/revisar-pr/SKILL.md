@@ -11,7 +11,9 @@ skill verifica se a mudança respeita a esteira SDD antes do merge. As duas se c
 ## Identifique o alvo
 - O PR/MR (número/branch) e a feature `specs/NNNN-<nome>/` correspondente.
 - Se GitHub/GitLab MCP estiver conectado (conta validada — ver `/integracoes`), leia o diff e os
-  metadados pelo MCP. Senão, use o diff local (`git diff <base>...HEAD`).
+  metadados pelo MCP. **Se não houver MCP do git host**, ofereça rodar `/integracoes` para conectar
+  (habilita ler metadados e postar o veredito no PR/MR); se recusar, siga com o diff local
+  (`git diff <base>...HEAD`).
 
 ## Checklist de conformidade SDD
 - [ ] **Spec existe e está aprovada** para o escopo da mudança (tier correto para o tamanho/risco).

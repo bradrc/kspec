@@ -115,7 +115,13 @@ Levantar o ferramental (Jira, Confluence, Notion, GitHub, cloud…) e conectar M
 ao kickoff — você pode iniciar o boilerplate **sem conhecer as ferramentas ainda**. Rode
 **`/integracoes`** quando souber: **antes do `/kickoff`** (ideal — os MCPs de leitura alimentam os
 artefatos com dado real) ou **depois**. Ela gera `integrations.md` e, se aprovado, `.mcp.json`,
-com a **trava de conta/workspace** (evita usar o Notion pessoal no lugar do business).
+com a **trava de conta/workspace** (evita usar o Notion pessoal no lugar do business), e **registra
+os MCPs validados no roteamento** (bloco "Ferramentas conectadas (MCP)" do `CLAUDE.md` + skills).
+
+Você não precisa lembrar de rodá-la: o **`/kickoff` faz uma oferta neutra** de conectar no
+discovery (sem propor ferramenta — você diz o que usa), e as skills **reoferecem `/integracoes`** no
+ponto em que o valor aparece — `/nova-feature` na quebra de tasks (gestão), `/revisar-pr` ao ler o
+PR/MR (git host). Recusou no início? A skill segue **disponível para acionar depois**, é re-executável.
 
 ## Como iniciar uma nova feature — `/nova-feature`
 
