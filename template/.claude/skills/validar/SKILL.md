@@ -16,7 +16,9 @@ inspeção. Rode depois de implementar (pode ser em outra sessão).
    Se a spec tem **Matriz de decisão**, cada linha é um caso de teste: confira que **toda linha**
    tem teste correspondente (combinações são onde mais escapa bug).
 4. **SPEC_DEVIATION:** resolva os pendentes — ou corrige o código (a spec vence) ou atualiza a
-   spec conscientemente (e registra ADR se for difícil de reverter).
+   spec conscientemente (e registra ADR se for difícil de reverter). Se a decisão "corrigir vs
+   atualizar" tiver ramificações (afeta outros AC, fronteiras, ADRs), rode **`/clarificar`** para
+   fechar a árvore antes de escolher.
 5. **Definition of Done** (ver `README.md` / `CLAUDE.md`): AC verdes pelo gate, sem deviation
    aberto, ADRs registrados, glossário/context-map atualizados, spec fiel.
 6. **Atualize `docs/STATE.md`** (próximo passo / decisões) — ou rode `/handoff` para encerrar.

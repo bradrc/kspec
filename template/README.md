@@ -170,7 +170,7 @@ boilerplate_sdd/
 ├── README.md                  # este manual
 ├── CLAUDE.md                  # convenções que o agente de IA deve seguir
 ├── .claude/skills/            # kickoff·mapear·roadmap·camada-agentica·integracoes
-│                              # nova-feature·validar·revisar-pr·setup-ci·handoff
+│                              # nova-feature·clarificar·validar·revisar-pr·setup-ci·handoff
 ├── specs/
 │   ├── _templates/            # os 5 templates da esteira
 │   ├── quick/                 # quick mode: tarefas trivial com rastro leve

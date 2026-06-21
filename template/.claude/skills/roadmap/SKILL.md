@@ -18,6 +18,8 @@ Princípio: **quick wins de baixo risco primeiro** para gerar tração e confian
 ## Construa
 - Horizontes **Now / Next / Later** (datas só no "Agora" — evita falsa precisão).
 - Cada item: valor, esforço, **dono**, dependências, "pronto quando".
+- Prioridade empatada ou dependências enredadas entre itens? Rode **`/clarificar`** para sabatinar
+  a ordenação (uma pergunta por vez) até a sequência fechar — em vez de chutar o "Agora".
 - **Brownfield:** inclua a seção de **adoção incremental do SDD** (sem big-bang: próxima feature
   já nasce com spec; backfill de ADRs e context-map depois).
 - Defina a **cadência de revisão** e quem decide prioridade.

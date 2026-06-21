@@ -52,7 +52,7 @@ Encadeadas: **Lean Inception** (descobrir) → **DDD** (modelar) → **TDD** (de
 seu-projeto/
 ├── CLAUDE.md                  # convenções que o agente segue (verificação de conhecimento, camadas, DoD)
 ├── README.md                  # o manual da esteira SDD
-├── .claude/skills/            # 14 skills (ver abaixo) — + as views dos clientes extras escolhidos
+├── .claude/skills/            # 15 skills (ver abaixo) — + as views dos clientes extras escolhidos
 ├── .spec-driven/manifest.json # quais clientes foram gerados (usado pelo update)
 ├── .github/workflows/         # esteira.yml — gate de conformidade na CI
 ├── scripts/                   # audit-esteira.mjs + validate-mermaid.mjs + eval-spec-fidelity.mjs
@@ -76,6 +76,7 @@ seu-projeto/
 | `/roadmap` | constrói/revisa o roadmap com o time |
 | `/camada-agentica` | gera rules, subagents, skills e workflows/CI |
 | `/nova-feature` | abre uma feature no padrão SDD (tier → spec → tasks) |
+| `/clarificar` | sabatina: entrevista implacável (uma pergunta por vez) que afia spec/design ambíguos antes de construir |
 | `/validar` | UAT: gates, AC→teste, SPEC_DEVIATION, DoD |
 | `/revisar-pr` | gate de conformidade SDD no PR/MR |
 | `/setup-ci` | pipeline CI/CD que materializa os gates |

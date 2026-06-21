@@ -11,6 +11,8 @@ o trabalho para um projeto que está *começando* é diferente do de um projeto 
 ## Princípios de condução
 - **Pergunte em lotes curtos** com `AskUserQuestion` (máx. 4 perguntas, 2-4 opções cada).
   Ofereça sempre um default "(Recomendado)" como primeira opção; aceite "Other" livre.
+  Quando um eixo abrir uma **decisão ramificada** (escolhas que dependem umas das outras — ex.:
+  arquitetura → bounded contexts → infra), troque o lote por uma **sabatina**: rode **`/clarificar`**.
 - **Não invente decisões de arquitetura.** Você propõe opções com trade-offs; quem decide é o usuário.
 - **Não levante nem proponha ferramentas aqui** — isso é a skill `/integracoes`. O kickoff só faz a
   **oferta neutra** (Fase 0.5) de conectar. Se a `/integracoes` já rodou, aproveite os insumos puxados;

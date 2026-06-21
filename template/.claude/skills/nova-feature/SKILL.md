@@ -9,7 +9,10 @@ Abre e conduz uma feature pela esteira do `README.md`. A **spec é o contrato**;
 ordem dos gates e pare em cada um para review. Siga as convenções do `CLAUDE.md`.
 
 ## Princípios
-- **Pergunte em lotes curtos** com `AskUserQuestion`; ofereça defaults "(Recomendado)".
+- **Pergunte em lotes curtos** com `AskUserQuestion`; ofereça defaults "(Recomendado)". Mas quando a
+  ambiguidade for **profunda e ramificada** (uma decisão depende da outra), troque o lote por uma
+  **sabatina** — rode **`/clarificar`** (uma pergunta por vez, caminhando a árvore) e volte com o
+  entendimento fechado. Especialmente útil nos gates de **design** e **spec**.
 - **Não delegue a `spec.md`** — os critérios de aceite são o contrato; o usuário valida.
 - Ações outward-facing (criar issue, publicar) → **confirme antes**.
 - *Tools-aware:* só use um MCP se ele estiver disponível na sessão (`mcp__<servidor>__*`);
@@ -44,11 +47,14 @@ Para cada artefato do tier, rascunhe a partir do template e **pare no gate para 
 1. **`product.md`** (arquitetural) — problema, para quem, métrica, goals/non-goals.
 2. **`design.md`** (arquitetural) — solução + os 5 eixos (stack, arquitetura, infra, qualidade,
    observabilidade) + alternativas/trade-offs/riscos. Decisão difícil de reverter → vira ADR.
+   Trade-offs entrelaçados? Rode **`/clarificar`** para sabatinar os ramos antes de fixar a decisão.
    Se existir o subagente `domain-modeler`/`spec-reviewer`, ofereça delegar a eles.
 3. **`domain.md`** (arquitetural) — bounded context, linguagem ubíqua, agregados, eventos.
    Atualize `docs/glossary.md` e `docs/architecture/context-map.md` se surgirem termos/fronteiras.
 4. **`spec.md`** (sempre) — critérios de aceite em Given/When/Then, casos de borda, fora de escopo.
-   Gate **Definition of Ready**: cada AC é testável e não-ambíguo? Se houver `spec-reviewer`, use-o.
+   Gate **Definition of Ready**: cada AC é testável e não-ambíguo? **Algum AC ainda vago ou um "como
+   deveria se comportar quando…" em aberto? Rode `/clarificar`** para fechar a árvore antes de gravar.
+   Se houver `spec-reviewer`, use-o.
    **Regra que combina vários fatores** (flags, estados, modos)? Use a **Matriz de decisão** do
    template — tabela-verdade é mais densa e barata em tokens que prosa, e cada linha vira teste.
 5. **`tasks.md`** (sempre) — decomponha em tasks, cada uma mapeando para um ou mais AC + plano de teste.
