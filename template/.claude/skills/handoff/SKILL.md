@@ -16,8 +16,12 @@ Atualize `docs/STATE.md` com o estado real desta sessão:
    e linke; o STATE só resume.
 3. **Bloqueios** — o que trava e quem/como destrava.
 4. **Ideias adiadas / todos** — o que ficou de fora de propósito, com o gatilho para reconsiderar.
-5. Marque a data e o autor. Se houver `SPEC_DEVIATION` aberto, registre como bloqueio.
-6. Ofereça um commit (`docs: handoff — atualiza STATE`) se for repositório git.
+5. **Consolide `docs/lessons.md`** (condicional — só se houve aprendizado): a captura das lições é
+   *inline* durante o trabalho, não aqui. No handoff você **revisa e poda**: alguma lição duplicada?
+   alguma já **estabilizou** → promova pro destino durável (ADR / glossary / `CLAUDE.md` / TESTING)
+   e **remova de `lessons.md`**, deixando só o link em "Promovidas". Não force entradas vazias.
+6. Marque a data e o autor. Se houver `SPEC_DEVIATION` aberto, registre como bloqueio.
+7. Ofereça um commit (`docs: handoff — atualiza STATE`) se for repositório git.
 
 > Seja conciso e acionável. O STATE é para alguém (ou um agente) retomar frio amanhã.
 
@@ -31,4 +35,6 @@ Atualize `docs/STATE.md` com o estado real desta sessão:
 
 ## Regras
 - STATE.md é **volátil**; ADR é **durável**. Não escreva decisão estrutural só no STATE.
+- `lessons.md` é **staging**: no handoff só consolida/poda — a captura é inline durante o trabalho.
+  Lição que estabilizou tem que **sair** de lá; se está só crescendo, a poda falhou.
 - Não invente progresso: relate fielmente o que foi feito, o que falta e o que está bloqueado.

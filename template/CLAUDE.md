@@ -18,7 +18,8 @@ Este projeto segue **Spec-Driven Development (SDD)**. Leia antes de implementar 
 feature ativa em `specs/`.
 
 Todos os outros docs são `alwaysApply: false` — **não os leia agora**. Puxe cada um **sob demanda**,
-quando a tarefa exigir, guiado pelo `description` no frontmatter dele.
+quando a tarefa exigir, guiado pelo `description` no frontmatter dele. Para **achar onde algo mora**,
+o índice navegável é `docs/README.md` (mapa do projeto).
 
 ## A spec é a fonte da verdade
 - Implemente **a partir de** `specs/NNNN-*/spec.md`. Os critérios de aceite
@@ -123,8 +124,16 @@ Se durante a implementação você precisar fazer diferente do que a `spec.md` d
   vai pro STATE.
 - Atualize o STATE ao pausar/encerrar uma sessão e leia-o ao retomar. Ver a skill `/handoff`.
 
+## Aprendizados & gotchas — `docs/lessons.md`
+- Ao **corrigir um erro não-óbvio, quebrar uma suposição ou descobrir um gotcha** (quirk de lib,
+  armadilha de setup, rate-limit), **registre 1 linha em `docs/lessons.md` na hora** — não espere
+  o handoff, senão o detalhe some. É captura *just-in-time*, não retrospectiva.
+- `lessons.md` é **área de staging volátil**: a lição que estabiliza é **promovida** (ADR, glossary,
+  este `CLAUDE.md` ou TESTING) e **removida** de lá. A consolidação/poda acontece no `/handoff`.
+
 ## Onde escrever
 - Decisão arquitetural durável → novo ADR (`docs/architecture/adr/`), nunca edite ADR antigo (são imutáveis; crie um que o substitua).
 - Estado do trabalho / próximo passo → `docs/STATE.md`.
+- Aprendizado transversal / gotcha (ainda não estabilizado) → `docs/lessons.md`.
 - Termo de negócio → `docs/glossary.md`.
 - Mudança de fronteira/contexto → `docs/architecture/context-map.md`.

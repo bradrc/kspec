@@ -176,6 +176,7 @@ boilerplate_sdd/
 │   ├── quick/                 # quick mode: tarefas trivial com rastro leve
 │   └── 0001-exemplo-cota-de-uso/  # exemplo preenchido
 ├── docs/                      # agrupado por concern (nomes estáveis, não numerados)
+│   ├── README.md             # mapa do projeto — porta de entrada com link p/ cada artefato
 │   ├── glossary.md            # linguagem ubíqua global (anexo)
 │   ├── STATE.md               # memória de trabalho (volátil) — continuidade
 │   ├── product/               # vision · mvp-canvas · roadmap

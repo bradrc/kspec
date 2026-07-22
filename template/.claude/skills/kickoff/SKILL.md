@@ -104,6 +104,7 @@ Gere/atualize usando os templates do projeto:
 | `docs/architecture/context-map.md` | ambos | existente (inicial no greenfield; reverse-engineered no brownfield) |
 | `docs/architecture/overview.md` | ambos | existente — consolide os **5 eixos** + segurança + operacional, com links para ADRs/context-map/diagrams/TESTING |
 | `docs/glossary.md` | ambos | existente (semeie os termos centrais) |
+| `docs/README.md` | ambos | existente — **mapa do projeto**: preencha o nome/one-liner, confira os links e liste as specs ativas. É a porta de entrada de `docs/`. |
 | `CLAUDE.md` | ambos | existente (preencha stack, comandos, quality gates, observabilidade) |
 | `docs/architecture/adr/NNNN-*.md` | ambos | `docs/architecture/adr/_template.md` (um por decisão estrutural; retroativos no brownfield) |
 | `docs/product/roadmap.md` | ambos | `docs/product/_templates/roadmap.template.md` |
@@ -127,6 +128,10 @@ gere só o aprovado. Itens não aprovados viram itens do roadmap (Fase 5). Ref.:
 ## Fase 5 — Roadmap e fechamento
 - Execute a skill **`/roadmap`** (mesma lógica): construa `roadmap.md` em Now/Next/Later, com valor,
   esforço, dono e dependências, quick wins primeiro — para rodar e revisar **com o time**.
+- **Atualize `docs/README.md`** (mapa do projeto): preencha nome + one-liner; **para cada artefato
+  que você gerou, troque o caminho em `código` por um link Markdown** apontando para o arquivo;
+  remova a linha do modo que não se aplica (produto greenfield × assessment brownfield) e liste as
+  specs. É a página que o time abre para achar tudo.
 - Se for repositório git, ofereça `git add -A && git commit -m "docs: kickoff do projeto"`.
-- Resuma com links clicáveis e aponte o próximo passo: criar a 1ª feature em `specs/NNNN-<nome>/`
-  escolhendo o tier (ver `README.md`).
+- Resuma com links clicáveis, **apontando o `docs/README.md` como a home**, e indique o próximo
+  passo: criar a 1ª feature em `specs/NNNN-<nome>/` escolhendo o tier (ver `README.md`).
