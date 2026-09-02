@@ -229,6 +229,77 @@
         <div class="terminal-line system">[SISTEMA] KSpec SDD OS Terminal inicializado. Monitorando subprocessos e CLI runners.</div>
       </div>
     </div>
+
+    <!-- Card Detail Modal / Drawer -->
+    <div class="modal-overlay" id="cardDetailModal">
+      <div class="modal-container">
+        <div class="modal-header">
+          <div class="modal-title-area">
+            <span class="card-req-badge" id="modalCardBadge">REQ-0001</span>
+            <span class="modal-status-badge" id="modalCardAgent">Dev Agent</span>
+            <select id="modalStatusSelect" class="modal-status-select">
+              <option value="backlog">BACKLOG</option>
+              <option value="todo">TO-DO</option>
+              <option value="doing">DOING</option>
+              <option value="testing">TESTING</option>
+              <option value="done">DONE</option>
+            </select>
+          </div>
+          <button class="modal-close-btn" id="closeCardModalBtn">✕</button>
+        </div>
+
+        <h2 class="modal-card-title" id="modalCardTitle">Título da Feature</h2>
+        <p class="modal-card-summary" id="modalCardSummary">Resumo da especificação</p>
+
+        <!-- Tabs de Navegação do Modal -->
+        <div class="modal-tabs">
+          <button class="modal-tab active" data-tab="tasks">Tasks & DoD (<span id="modalTasksCount">0</span>)</button>
+          <button class="modal-tab" data-tab="spec">Critérios de Aceite (Spec)</button>
+          <button class="modal-tab" data-tab="history">Histórico do Agente (<span id="modalHistoryCount">0</span>)</button>
+        </div>
+
+        <!-- Conteúdo das Tabs -->
+        <div class="modal-body">
+          <!-- Tab 1: Tasks -->
+          <div class="modal-tab-content active" id="tab-tasks">
+            <div class="tasks-table-container">
+              <div class="tasks-list-group" id="modalTasksList">
+                <!-- Renderizado via JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab 2: Spec Criteria -->
+          <div class="modal-tab-content" id="tab-spec">
+            <div class="spec-criteria-list" id="modalCriteriaList">
+              <!-- Renderizado via JS -->
+            </div>
+          </div>
+
+          <!-- Tab 3: Agent History -->
+          <div class="modal-tab-content" id="tab-history">
+            <div class="agent-history-list" id="modalAgentHistoryList">
+              <!-- Renderizado via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer com Ações do Agente -->
+        <div class="modal-footer">
+          <div class="modal-agent-buttons">
+            <button class="btn btn-secondary" id="modalRunDevBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <span>Disparar Dev Agent</span>
+            </button>
+            <button class="btn btn-secondary" id="modalRunQaBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span>Disparar QA Agent</span>
+            </button>
+          </div>
+          <button class="btn btn-primary" id="modalSaveBtn">Salvar Alterações</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="js/app.js"></script>

@@ -24,7 +24,6 @@ export class KspecServer {
       const url = new URL(req.url, `http://${req.headers.host}`);
       const pathname = url.pathname;
 
-      // CORS
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
       res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -35,13 +34,11 @@ export class KspecServer {
         return;
       }
 
-      // API Routes
       if (pathname.startsWith("/api/")) {
         await this.handleApi(req, res, url);
         return;
       }
 
-      // Static UI Files
       this.serveStatic(req, res, pathname);
     });
 
@@ -53,17 +50,14 @@ export class KspecServer {
     return server;
   }
 
-  // Tratamento das rotas da API
   async handleApi(req, res, url) {
     const pathname = url.pathname;
 
-    // Helper para resposta JSON
     const sendJson = (data, status = 200) => {
       res.writeHead(status, { "Content-Type": "application/json" });
       res.end(JSON.stringify(data));
     };
 
-    // Helper para ler body JSON
     const readBody = () => {
       return new Promise((resolve) => {
         const chunks = [];
@@ -134,7 +128,7 @@ export class KspecServer {
           else if (targetStatus === "backlog" || targetStatus === "todo") agentType = "architect";
 
           const prompt = `Executar tarefa correspondente ao card ${cardId} no status ${targetStatus.toUpperCase()}`;
-          const { runId, emitter } = this.cliRunner.runAgentCli({
+          const { runId, emitter } = await this.cliRunner.runAgentCli({
             agentType,
             cliType,
             prompt,
@@ -144,7 +138,22 @@ export class KspecServer {
           });
 
           emitter.on("log", (log) => this.broadcastSse({ event: "agent-log", runId, ...log }));
-          emitter.on("end", (end) => this.broadcastSse({ event: "agent-end", runId, ...end }));
+          
+          emitter.on("end", (end) => {
+            // Salva a mensagem do que foi feito no card
+            const msg = end.code === 0
+              ? `${agentType.toUpperCase()} AGENT concluiu com sucesso a execução de ${cardId} em conformidade com o DoD.`
+              : `${agentType.toUpperCase()} AGENT finalizou com alertas/erros (código: ${end.code}).`;
+            
+            this.sddEngine.saveAgentMessageToCard(this.projectDir, cardId, {
+              agentType,
+              message: msg,
+              log: end.log || "",
+              status: targetStatus,
+            });
+
+            this.broadcastSse({ event: "agent-end", runId, ...end, cardId, agentMessage: msg });
+          });
 
           agentExecution = { runId, agentType, status: "started" };
         }
@@ -152,20 +161,27 @@ export class KspecServer {
         return sendJson({ success, agentExecution });
       }
 
-      // 7. Criar Card / Spec a partir do Spec Editor
+      // 7. Atualizar Item de Tarefa (Checkbox) dentro do Card
+      if (pathname === "/api/kanban/card-task" && req.method === "POST") {
+        const { cardId, taskNum, completed, status } = await readBody();
+        const success = this.sddEngine.updateCardTaskItem(this.projectDir, cardId, taskNum, { completed, status });
+        return sendJson({ success });
+      }
+
+      // 8. Criar Card / Spec a partir do Spec Editor
       if (pathname === "/api/kanban/create" && req.method === "POST") {
         const specData = await readBody();
         const result = this.sddEngine.createSpecFromRequirement(this.projectDir, specData);
         return sendJson({ success: true, result });
       }
 
-      // 8. Conversas do Spec Editor
+      // 9. Conversas do Spec Editor
       if (pathname === "/api/conversations" && req.method === "GET") {
         const convs = this.sddEngine.getConversations(this.projectDir);
         return sendJson({ conversations: convs });
       }
 
-      // 9. Mensagem no Chat do Spec Editor
+      // 10. Mensagem no Chat do Spec Editor
       if (pathname === "/api/conversations/message" && req.method === "POST") {
         const { conversationId, message, cliType = "auto" } = await readBody();
         const convs = this.sddEngine.getConversations(this.projectDir);
@@ -188,7 +204,6 @@ export class KspecServer {
         };
         conv.messages.push(userMsg);
 
-        // Processa resposta com o Harness Master e o LLM CLI
         const agentReply = await this.harness.processUserMessage(message, conv.messages, cliType);
         conv.messages.push(agentReply);
 
@@ -196,7 +211,7 @@ export class KspecServer {
         return sendJson({ conversation: conv, reply: agentReply });
       }
 
-      // 10. SSE Streaming para Logs dos Agentes
+      // 11. SSE Streaming para Logs dos Agentes
       if (pathname === "/api/agent/stream" && req.method === "GET") {
         res.writeHead(200, {
           "Content-Type": "text/event-stream",
@@ -210,31 +225,40 @@ export class KspecServer {
         return;
       }
 
-      // 11. Execução Manual de Agente
-      if (pathname === "/api/agent/run" && req.method === "POST") {
-        const { agentType = "dev", prompt, cliType = "auto", specPath } = await readBody();
-        const { runId, emitter } = this.cliRunner.runAgentCli({
+      // 12. Execução Direta de Agente para um Card
+      if (pathname === "/api/agent/run-card" && req.method === "POST") {
+        const { cardId, agentType = "dev", cliType = "auto" } = await readBody();
+        const prompt = `Executar desenvolvimento/validação completo para o requisito ${cardId}`;
+        const { runId, emitter } = await this.cliRunner.runAgentCli({
           agentType,
           cliType,
           prompt,
           cwd: this.projectDir,
-          specPath,
+          specPath: `specs/${cardId}/spec.md`,
         });
 
         emitter.on("log", (log) => this.broadcastSse({ event: "agent-log", runId, ...log }));
-        emitter.on("end", (end) => this.broadcastSse({ event: "agent-end", runId, ...end }));
+        
+        emitter.on("end", (end) => {
+          const msg = `${agentType.toUpperCase()} AGENT concluiu a execução em ${cardId} (exit: ${end.code}).`;
+          this.sddEngine.saveAgentMessageToCard(this.projectDir, cardId, {
+            agentType,
+            message: msg,
+            log: end.log || "",
+            status: agentType === "qa" ? "testing" : "doing",
+          });
+          this.broadcastSse({ event: "agent-end", runId, ...end, cardId, agentMessage: msg });
+        });
 
         return sendJson({ runId, status: "started" });
       }
 
-      // 404
       sendJson({ error: "Endpoint não encontrado" }, 404);
     } catch (err) {
       sendJson({ error: err.message }, 500);
     }
   }
 
-  // Transmite evento para todos os clientes SSE conectados
   broadcastSse(data) {
     const payload = `data: ${JSON.stringify(data)}\n\n`;
     for (const client of this.sseClients) {
@@ -246,7 +270,6 @@ export class KspecServer {
     }
   }
 
-  // Serve arquivos estáticos da UI
   serveStatic(req, res, pathname) {
     let filePath = join(UI_DIR, pathname === "/" ? "index.html" : pathname);
 
@@ -278,7 +301,6 @@ export class KspecServer {
   }
 }
 
-// Execução direta
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const port = process.env.PORT || 3000;
   const server = new KspecServer({ port });

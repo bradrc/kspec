@@ -20,10 +20,8 @@ export class SddEngine {
       }
     };
 
-    // Adiciona o projeto atual
     addProj(baseDir);
 
-    // Se houver pasta examples, adiciona os exemplos como workspaces exploráveis
     const examplesDir = join(baseDir, "examples");
     if (existsSync(examplesDir)) {
       try {
@@ -37,7 +35,6 @@ export class SddEngine {
       } catch {}
     }
 
-    // Lê histórico de projetos registrados em ~/.kspec/workspaces.json se houver
     const homeConfig = join(process.env.HOME || "", ".kspec", "workspaces.json");
     if (existsSync(homeConfig)) {
       try {
@@ -53,7 +50,6 @@ export class SddEngine {
     return projects;
   }
 
-  // Registra um novo diretório de workspace
   static registerWorkspace(dirPath) {
     const absPath = resolve(dirPath);
     if (!existsSync(absPath)) return false;
@@ -75,7 +71,6 @@ export class SddEngine {
     return SddEngine.getProjectMeta(absPath);
   }
 
-  // Obtém metadados reais de um projeto SDD
   static getProjectMeta(projPath) {
     const folderName = basename(projPath);
     const hasSdd = existsSync(join(projPath, "specs")) || existsSync(join(projPath, "docs", "STATE.md")) || existsSync(join(projPath, ".spec-driven"));
@@ -87,7 +82,6 @@ export class SddEngine {
     let version = "1.0.0";
     let repoUrl = "local";
 
-    // Extrai URL real do Git se disponível
     if (hasGit) {
       try {
         const gitRemote = execSync("git remote get-url origin", { cwd: projPath, timeout: 1500, encoding: "utf8" }).trim();
@@ -114,7 +108,6 @@ export class SddEngine {
       } catch {}
     }
 
-    // Detecta outras stacks baseada em arquivos
     if (existsSync(join(projPath, "pom.xml")) || existsSync(join(projPath, "build.gradle"))) {
       stack = existsSync(join(projPath, "package.json")) ? "JAVA_REACT" : "JAVA_SPRING";
     } else if (existsSync(join(projPath, "*.csproj")) || existsSync(join(projPath, "src", "*.cs"))) {
@@ -127,7 +120,6 @@ export class SddEngine {
       stack = "GO_PROJECT";
     }
 
-    // Lê contexto técnico de docs/STATE.md
     const stateFile = join(projPath, "docs", "STATE.md");
     let stateSummary = "Framework SDD ativo.";
     if (existsSync(stateFile)) {
@@ -190,21 +182,23 @@ export class SddEngine {
       let summary = "";
       let acList = [];
       let tasksList = [];
+      let dodList = [];
+      let specRaw = "";
+      let tasksRaw = "";
       let priority = "P1";
       let overallStatus = "backlog";
 
       // Lê spec.md
       if (existsSync(specFile)) {
         try {
-          const specContent = readFileSync(specFile, "utf8");
-          const titleMatch = specContent.match(/^#\s+(?:Spec\s*—\s*)?(.*)$/m);
+          specRaw = readFileSync(specFile, "utf8");
+          const titleMatch = specRaw.match(/^#\s+(?:Spec\s*—\s*)?(.*)$/m);
           if (titleMatch) title = titleMatch[1].trim();
 
-          const summaryMatch = specContent.match(/##\s+Resumo\s*\n([\s\S]*?)(?=##|$)/i);
+          const summaryMatch = specRaw.match(/##\s+Resumo\s*\n([\s\S]*?)(?=##|$)/i);
           if (summaryMatch) summary = summaryMatch[1].trim();
 
-          // Extrai Critérios de Aceite
-          const acMatches = [...specContent.matchAll(/###\s+(AC-\d+:\s*[^\n]+)([\s\S]*?)(?=###|##|$)/g)];
+          const acMatches = [...specRaw.matchAll(/###\s+(AC-\d+:\s*[^\n]+)([\s\S]*?)(?=###|##|$)/g)];
           for (const m of acMatches) {
             acList.push({
               name: m[1].trim(),
@@ -217,10 +211,9 @@ export class SddEngine {
       // Lê tasks.md
       if (existsSync(tasksFile)) {
         try {
-          const tasksContent = readFileSync(tasksFile, "utf8");
+          tasksRaw = readFileSync(tasksFile, "utf8");
 
-          // Parse da tabela de tasks: | # | Task | Cobre AC | Gate | Status |
-          const tableLines = tasksContent.split("\n").filter((l) => l.trim().startsWith("|"));
+          const tableLines = tasksRaw.split("\n").filter((l) => l.trim().startsWith("|"));
           for (const line of tableLines) {
             const cols = line.split("|").map((c) => c.trim()).filter(Boolean);
             if (cols.length >= 3 && !cols[0].startsWith("#") && !cols[0].startsWith("---")) {
@@ -231,7 +224,7 @@ export class SddEngine {
               const statusRaw = (cols[4] || "todo").toLowerCase();
 
               let status = "todo";
-              if (statusRaw.includes("done") || statusRaw.includes("concluído") || statusRaw.includes("concluido")) status = "done";
+              if (statusRaw.includes("done") || statusRaw.includes("concl")) status = "done";
               else if (statusRaw.includes("doing") || statusRaw.includes("andamento") || statusRaw.includes("dev")) status = "doing";
               else if (statusRaw.includes("test") || statusRaw.includes("qa") || statusRaw.includes("validar")) status = "testing";
               else if (statusRaw.includes("backlog")) status = "backlog";
@@ -247,18 +240,38 @@ export class SddEngine {
               });
             }
           }
+
+          // Lê DoD
+          const dodMatches = [...tasksRaw.matchAll(/-\s*\[([ xX])\]\s*([^\n]+)/g)];
+          for (const d of dodMatches) {
+            dodList.push({
+              checked: d[1].toLowerCase() === "x",
+              text: d[2].trim(),
+            });
+          }
         } catch {}
       }
 
-      // Atualiza contadores
+      // Lê histórico de mensagens do agente no card
+      const activityLogFile = join(projectDir, ".spec-driven", "activity", `${specFolder}.json`);
+      let agentHistory = [];
+      let lastAgentMessage = "";
+      if (existsSync(activityLogFile)) {
+        try {
+          agentHistory = JSON.parse(readFileSync(activityLogFile, "utf8"));
+          if (agentHistory.length > 0) {
+            lastAgentMessage = agentHistory[agentHistory.length - 1].message || "";
+          }
+        } catch {}
+      }
+
       totalTasksCount += tasksList.length;
       const completedInCard = tasksList.filter((t) => t.completed).length;
       completedTasksCount += completedInCard;
 
-      // Determina status geral do Card
       if (tasksList.length === 0) {
         overallStatus = "backlog";
-      } else if (completedInCard === tasksList.length) {
+      } else if (completedInCard === tasksList.length && tasksList.length > 0) {
         overallStatus = "done";
       } else if (tasksList.some((t) => t.status === "testing")) {
         overallStatus = "testing";
@@ -268,7 +281,6 @@ export class SddEngine {
         overallStatus = "todo";
       }
 
-      // Atribui prioridade baseada no identificador
       if (specFolder.startsWith("0001") || specFolder.includes("auth") || specFolder.includes("core")) {
         priority = "P0";
       }
@@ -295,11 +307,15 @@ export class SddEngine {
         tasksCount: tasksList.length,
         completedTasksCount: completedInCard,
         tasks: tasksList,
+        dodList,
         acList,
+        specRaw,
+        tasksRaw,
+        agentHistory,
+        lastAgentMessage,
       });
     }
 
-    // Agrupa por colunas
     const columns = {
       backlog: cards.filter((c) => c.status === "backlog"),
       todo: cards.filter((c) => c.status === "todo"),
@@ -318,7 +334,79 @@ export class SddEngine {
     };
   }
 
-  // Atualiza o status de um Card ou Task no arquivo tasks.md e docs/STATE.md
+  // Registra atividade/mensagem do agente no card
+  saveAgentMessageToCard(projectDir = this.baseDir, specFolder, { agentType = "dev", message, log = "", status = "doing" }) {
+    const actDir = join(projectDir, ".spec-driven", "activity");
+    mkdirSync(actDir, { recursive: true });
+    const actFile = join(actDir, `${specFolder}.json`);
+
+    let history = [];
+    if (existsSync(actFile)) {
+      try { history = JSON.parse(readFileSync(actFile, "utf8")); } catch {}
+    }
+
+    const entry = {
+      id: `act-${Date.now()}`,
+      agentType,
+      message,
+      log: log.slice(-3000), // guarda os logs recentes
+      status,
+      timestamp: new Date().toISOString(),
+      timeFormatted: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
+
+    history.push(entry);
+    writeFileSync(actFile, JSON.stringify(history, null, 2), "utf8");
+
+    // Também anexa nota executiva no tasks.md se existir
+    const tasksFile = join(projectDir, "specs", specFolder, "tasks.md");
+    if (existsSync(tasksFile)) {
+      try {
+        let content = readFileSync(tasksFile, "utf8");
+        const today = new Date().toISOString().split("T")[0];
+        const note = `\n<!-- Agent Note [${today} ${agentType.toUpperCase()}]: ${message} -->\n`;
+        if (!content.includes(note.trim())) {
+          content += note;
+          writeFileSync(tasksFile, content, "utf8");
+        }
+      } catch {}
+    }
+
+    return entry;
+  }
+
+  // Atualiza um item de tarefa específico no tasks.md
+  updateCardTaskItem(projectDir = this.baseDir, specFolder, taskNum, { completed, status }) {
+    const tasksFile = join(projectDir, "specs", specFolder, "tasks.md");
+    if (!existsSync(tasksFile)) return false;
+
+    let content = readFileSync(tasksFile, "utf8");
+    const lines = content.split("\n");
+    const newLines = [];
+
+    const targetStatus = status || (completed ? "done" : "todo");
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (line.trim().startsWith("|") && !line.includes("Task") && !line.includes("---")) {
+        const cols = line.split("|");
+        if (cols.length >= 5) {
+          const num = cols[1].trim();
+          if (num === String(taskNum)) {
+            cols[cols.length - 2] = ` ${targetStatus} `;
+            newLines.push(cols.join("|"));
+            continue;
+          }
+        }
+      }
+      newLines.push(line);
+    }
+
+    writeFileSync(tasksFile, newLines.join("\n"), "utf8");
+    return true;
+  }
+
+  // Atualiza o status geral do Card
   updateCardStatus(projectDir = this.baseDir, specFolder, targetStatus, taskNum = null) {
     const tasksFile = join(projectDir, "specs", specFolder, "tasks.md");
     if (!existsSync(tasksFile)) return false;
@@ -344,13 +432,10 @@ export class SddEngine {
     }
 
     writeFileSync(tasksFile, newLines.join("\n"), "utf8");
-
-    // Atualiza docs/STATE.md com a atividade recente
     this.updateStateFile(projectDir, specFolder, targetStatus);
     return true;
   }
 
-  // Atualiza docs/STATE.md
   updateStateFile(projectDir, specFolder, status) {
     const docsDir = join(projectDir, "docs");
     mkdirSync(docsDir, { recursive: true });
@@ -398,7 +483,6 @@ alwaysApply: true
     } catch {}
   }
 
-  // Salva ou recupera conversas do Spec Editor em .spec-driven/conversations/
   getConversations(projectDir = this.baseDir) {
     const convDir = join(projectDir, ".spec-driven", "conversations");
     if (!existsSync(convDir)) {
@@ -424,12 +508,10 @@ alwaysApply: true
     return true;
   }
 
-  // Cria uma nova spec completa a partir dos dados do Spec Editor
   createSpecFromRequirement(projectDir = this.baseDir, { title, summary, acs = [], tasks = [], priority = "P1" }) {
     const specsDir = join(projectDir, "specs");
     mkdirSync(specsDir, { recursive: true });
 
-    // Calcula próximo número NNNN
     let maxNum = 0;
     try {
       const existing = readdirSync(specsDir);
@@ -455,7 +537,6 @@ alwaysApply: true
     const targetFolder = join(specsDir, folderName);
     mkdirSync(targetFolder, { recursive: true });
 
-    // Monta spec.md
     const specMd = `---
 name: spec
 description: Spec — ${title}
@@ -472,12 +553,13 @@ ${summary || "Implementação orientada a especificações."}
 ${
   acs.length > 0
     ? acs
-        .map(
-          (ac, i) => `### AC-${i + 1}: ${ac.title || ac}
+        .map((ac, i) => {
+          const text = typeof ac === "string" ? ac : (ac.title || ac.name || `AC-${i+1}`);
+          return `### ${text.startsWith("AC-") ? text : `AC-${i + 1}: ${text}`}
 - **Dado** o contexto da aplicação
-- **Quando** o usuário executa a ação descrita
-- **Então** o comportamento esperado é validado com sucesso`
-        )
+- **Quando** a operação for disparada
+- **Então** o resultado deve estar estritamente conforme com as regras de negócio`;
+        })
         .join("\n\n")
     : `### AC-1: Fluxo principal de ${title}
 - **Dado** o ambiente configurado
@@ -486,10 +568,9 @@ ${
 }
 
 ## Fora de escopo
-- Alterações estruturais não contempladas no MVP desta feature.
+- Alterações estruturais não contempladas no escopo desta feature.
 `;
 
-    // Monta tasks.md
     const tasksMd = `---
 name: tasks
 description: Tasks — ${title}
@@ -502,13 +583,16 @@ alwaysApply: false
 |----|-------------------------------|---------------|------------------|--------|
 ${
   tasks.length > 0
-    ? tasks.map((t, i) => `| ${i + 1}  | ${t.text || t} | AC-1          | \`npm test\`     | todo   |`).join("\n")
+    ? tasks.map((t, i) => {
+        const text = typeof t === "string" ? t : (t.text || t.task || `Task ${i+1}`);
+        return `| ${i + 1}  | ${text.replace(/\|/g, "-")} | AC-1          | \`npm test\`     | todo   |`;
+      }).join("\n")
     : `| 1  | Implementar lógica de domínio | AC-1          | \`npm test\`     | todo   |
 | 2  | Integrar componentes e UI     | AC-1          | \`npm test\`     | todo   |`
 }
 
 ## Plano de teste
-- Testes unitários cobrindo todos os ACs da spec.
+- Testes automatizados cobrindo todos os ACs da spec.
 
 ## Definition of Done
 - [ ] ACs validados pelo gate de teste
@@ -519,7 +603,6 @@ ${
     writeFileSync(join(targetFolder, "spec.md"), specMd, "utf8");
     writeFileSync(join(targetFolder, "tasks.md"), tasksMd, "utf8");
 
-    // Atualiza STATE.md
     this.updateStateFile(projectDir, folderName, "todo");
 
     return {

@@ -4,21 +4,6 @@ import { CliRunner } from "./cli-runner.mjs";
 
 /**
  * Harness Master — O Orquestrador Central do Spec-Driven Development (SDD)
- * 
- * Conhece profundamente todo o ciclo de vida:
- * 1. Lean Inception (Discovery) -> docs/product/ (vision, stakeholders, journeys, features, mvp-canvas, roadmap)
- * 2. DDD & Arquitetura -> docs/architecture/ (overview 5 eixos, context-map, diagrams, adr/), docs/glossary.md
- * 3. TDD / Design Técnico -> Technical Design Docs, alternativas e trade-offs
- * 4. SDD (Especificação e Contrato) -> specs/NNNN-<nome>/ (spec.md, tasks.md)
- *    - Tiers: Trivial (<=3 arquivos / quick), Pequeno (spec+tasks), Arquitetural (product+design+domain+spec+tasks)
- *    - Definition of Ready (DoR) e Matriz de Decisão
- *    - Critérios de Aceite em Given/When/Then
- * 5. Dev Agent Loop -> Implementação respeitando camadas DDD (src/README.md) e DoD
- * 6. QA Agent Validation -> /validar, mapeamento AC -> teste, SPEC_DEVIATION check
- * 7. Handoff & Memória Viva -> /handoff, docs/STATE.md, poda de docs/lessons.md
- * 8. 15 Skills Nativas -> /kickoff, /integracoes, /mapear, /diagramar, /roadmap, /camada-agentica,
- *                       /nova-feature, /clarificar, /validar, /revisar-pr, /setup-ci, /metricas,
- *                       /auditar, /evals, /handoff
  */
 export class HarnessMaster {
   constructor(projectDir = process.cwd(), cliRunner = new CliRunner()) {
@@ -26,29 +11,19 @@ export class HarnessMaster {
     this.cliRunner = cliRunner;
   }
 
-  // Analisa detalhadamente a memória viva e a esteira do projeto
   analyzeCurrentState() {
     const analysis = {
       currentStage: "Discovery / Greenfield",
       activeFeature: null,
       nextStep: "Executar /kickoff ou /nova-feature para abrir o primeiro requisito.",
       blockers: [],
-      recentDecisions: [],
-      stats: { totalSpecs: 0, completedSpecs: 0, hasGlossary: false, hasArchitecture: false },
-      skills: [
-        "/kickoff", "/integracoes", "/mapear", "/diagramar", "/roadmap",
-        "/camada-agentica", "/nova-feature", "/clarificar", "/validar",
-        "/revisar-pr", "/setup-ci", "/metricas", "/auditar", "/evals", "/handoff"
-      ]
+      stats: { totalSpecs: 0, hasGlossary: false, hasArchitecture: false },
     };
 
-    // Lê STATE.md
     const statePath = join(this.projectDir, "docs", "STATE.md");
     if (existsSync(statePath)) {
       try {
         const stateContent = readFileSync(statePath, "utf8");
-        
-        // Feature ativa e próximo passo
         const inProgressMatch = stateContent.match(/## Em andamento \/ próximo passo[\s\S]*?(?=##|$)/);
         if (inProgressMatch) {
           const lines = inProgressMatch[0].split("\n");
@@ -58,7 +33,6 @@ export class HarnessMaster {
           }
         }
 
-        // Bloqueios
         const blockersMatch = stateContent.match(/## Bloqueios[\s\S]*?(?=##|$)/);
         if (blockersMatch) {
           const bLines = blockersMatch[0].split("\n").filter(l => l.includes("[ ]") || l.includes("[x]"));
@@ -67,11 +41,6 @@ export class HarnessMaster {
       } catch {}
     }
 
-    // Verifica Glossário e Arquitetura
-    analysis.stats.hasGlossary = existsSync(join(this.projectDir, "docs", "glossary.md"));
-    analysis.stats.hasArchitecture = existsSync(join(this.projectDir, "docs", "architecture", "overview.md"));
-
-    // Verifica Specs
     const specsDir = join(this.projectDir, "specs");
     if (existsSync(specsDir)) {
       try {
@@ -79,7 +48,7 @@ export class HarnessMaster {
         analysis.stats.totalSpecs = specs.length;
         if (specs.length > 0 && !analysis.activeFeature) {
           analysis.activeFeature = specs[specs.length - 1];
-          analysis.currentStage = "SDD Execution (Features em andamento)";
+          analysis.currentStage = "SDD Execution";
         }
       } catch {}
     }
@@ -87,58 +56,44 @@ export class HarnessMaster {
     return analysis;
   }
 
-  // Gera a resposta inteligente do Harness Master para o Spec Editor & Chat
   async processUserMessage(userMessage, conversationHistory = [], cliType = "auto") {
     const analysis = this.analyzeCurrentState();
 
-    // Sistema de Instruções Canônicas do SDD
     const systemPrompt = `
-Você é o HARNESS MASTER e AI ARCHITECT da esteira SDD (Spec-Driven Development).
-Você conhece todo o framework:
-- Lean Inception (Visão, Personas, MVP Canvas, Roadmap)
-- DDD (Domínio, Linguagem Ubíqua, Bounded Contexts, Camadas)
-- Technical Design (5 Eixos: Stack, Arquitetura, Infra, Qualidade, Observabilidade, ADRs)
-- SDD (A Spec é o contrato. Tiers: Trivial, Pequeno, Arquitetural. ACs em Given/When/Then, Definition of Ready, Definition of Done).
-- Sabatina de Clarificação: quando há ambiguidade, você sabatina fazendo perguntas objetivas.
+Você é o HARNESS MASTER e AI ARCHITECT do framework SDD (Spec-Driven Development).
+Você conhece todo o ciclo Lean Inception -> DDD -> Technical Design -> SDD.
 
-Estado Atual do Workspace:
-- Fase: ${analysis.currentStage}
-- Feature Ativa: ${analysis.activeFeature || "Nenhuma no momento"}
-- Próximo Passo do STATE: ${analysis.nextStep}
-- Bloqueios Ativos: ${analysis.blockers.join("; ") || "Nenhum"}
-- Total de Specs: ${analysis.stats.totalSpecs}
-
-Diretrizes da sua resposta:
-1. Atue como o engenheiro arquiteto líder. Seja claro, pragmático e rigoroso com as convenções SDD.
-2. Se o usuário estiver descrevendo uma nova funcionalidade, requisito, tela ou endpoint:
-   - Responda explicando como a funcionalidade se encaixa na arquitetura.
-   - Sempre forneça no final da sua mensagem a estrutura do card em JSON para inclusão direta no Kanban do SDD:
+Diretrizes:
+1. Responda como o Arquiteto Líder do projeto.
+2. Analise a solicitação sob a ótica de Domínio, Arquitetura em Camadas e Contrato (Spec).
+3. Formule Critérios de Aceite (ACs) rigorosos em Given/When/Then (Dado/Quando/Então) e a decomposição de tarefas acionáveis com gates de teste.
+4. No final da sua resposta, forneça OBRIGATORIAMENTE um bloco JSON estruturado com o card para o Kanban:
 \`\`\`json
 {
-  "title": "Nome da Feature em formato claro",
-  "summary": "Resumo executivo do requisito",
+  "title": "Título Claro da Feature",
+  "summary": "Resumo executivo do objetivo e valor",
   "tasks": [
-    "Tarefa 1 acionável (Domínio/UI)",
-    "Tarefa 2 acionável (Integração/Lógica)",
-    "Tarefa 3 acionável (Validação de ACs)",
-    "Tarefa 4 de conformidade (Testes e DoD)"
+    "Tarefa 1 acionável",
+    "Tarefa 2 acionável",
+    "Tarefa 3 acionável",
+    "Tarefa 4 de testes e validação de DoD"
   ],
   "acs": [
-    "AC-1: [Dado/Quando/Então do cenário principal]",
-    "AC-2: [Cenário de validação ou erro/borda]"
+    "AC-1: Cenário de sucesso principal",
+    "AC-2: Validação de entradas e regras",
+    "AC-3: Tratamento de exceção / borda"
   ]
 }
 \`\`\`
-3. Se o usuário fizer perguntas sobre o processo SDD, como criar ADRs, como rodar testes, ou o que está pendente, oriente-o com base no estado real do projeto e nas 15 skills (/kickoff, /nova-feature, /clarificar, /validar, /handoff, etc.).
 
-Mensagem do Desenvolvedor:
-"${userMessage}"
+Workspace: ${this.projectDir}
+Feature Ativa: ${analysis.activeFeature || "Nenhuma"}
+Mensagem do Usuário: "${userMessage}"
 `;
 
     let aiResponseText = "";
     let generatedCard = null;
 
-    // 1. Tenta consultar a LLM instalada (Gemini, Claude, etc.)
     try {
       const queryResult = await this.cliRunner.queryLlmCli({
         cliType,
@@ -148,8 +103,6 @@ Mensagem do Desenvolvedor:
 
       if (queryResult.success && queryResult.text) {
         aiResponseText = queryResult.text;
-        
-        // Extrai bloco JSON do card
         const jsonMatch = aiResponseText.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
         if (jsonMatch) {
           try {
@@ -160,39 +113,61 @@ Mensagem do Desenvolvedor:
       }
     } catch {}
 
-    // 2. Fallback heurístico inteligente se o CLI não estiver conectado ou sem crédito
-    if (!generatedCard && (userMessage.length > 15 || userMessage.includes("criar") || userMessage.includes("remover") || userMessage.includes("tela") || userMessage.includes("ajustar"))) {
-      const title = userMessage.split(".")[0].replace(/^quero\s+|^preciso\s+que\s+/i, "").slice(0, 70).trim();
-      const cleanMsg = userMessage.toLowerCase();
-      const tasks = [];
+    // Fallback rico e contextual se o CLI externo não responder
+    if (!generatedCard) {
+      const clean = userMessage.toLowerCase();
+      let title = userMessage.split(".")[0].replace(/^quero\s+|^preciso\s+que\s+/i, "").slice(0, 60).trim();
+      let summary = `Implementação orientada a especificações: ${userMessage}`;
+      let tasks = [];
+      let acs = [];
 
-      if (cleanMsg.includes("botão") || cleanMsg.includes("menu") || cleanMsg.includes("tela") || cleanMsg.includes("front")) {
-        tasks.push(`Identificar o componente de UI correspondente a: ${title}`);
-        tasks.push("Implementar as alterações visuais e vincular os estados reativos");
-        tasks.push("Validar integridade de rotas e navegação");
-        tasks.push("Executar testes de renderização e verificar conformidade com DoD");
+      if (clean.includes("cep")) {
+        title = "Sistema de Consulta de CEP";
+        summary = "Serviço de busca de endereços por CEP com validação de formato e integração com serviço de CEP.";
+        acs = [
+          "AC-1: CEP válido (8 dígitos) retorna logradouro, bairro, cidade e UF com status 200",
+          "AC-2: CEP inexistente na base de dados retorna erro 404 e payload padronizado",
+          "AC-3: Formato de CEP inválido (menos de 8 dígitos ou caracteres inválidos) retorna erro 400"
+        ];
+        tasks = [
+          "Definir Value Object 'Cep' com validação de máscara e 8 dígitos no domínio",
+          "Implementar Service de busca e integração com API de CEP",
+          "Criar Endpoint REST GET /cep/:codigo com tratamento de status 200, 400 e 404",
+          "Escrever testes unitários e de integração cobrindo AC-1, AC-2 e AC-3 (DoD)"
+        ];
+      } else if (clean.includes("auth") || clean.includes("login") || clean.includes("jwt")) {
+        title = "Autenticação e Sessão de Usuário";
+        summary = "Mecanismo seguro de autenticação com validação de credenciais e emissão de tokens JWT.";
+        acs = [
+          "AC-1: Credenciais válidas retornam token JWT e payload de usuário",
+          "AC-2: Senha incorreta ou usuário inexistente retorna erro 401 não autorizado",
+          "AC-3: Token expirado ou inválido é rejeitado em rotas autenticadas"
+        ];
+        tasks = [
+          "Modelar entidade de Usuário e Value Object de Hash de Senha no domínio",
+          "Implementar serviço de autenticação e geração de tokens JWT",
+          "Criar middleware de autorização para proteção de rotas privadas",
+          "Adicionar suíte de testes de segurança cobrindo AC-1, AC-2 e AC-3"
+        ];
       } else {
-        tasks.push(`Modelar entidades e contratos no domínio para: ${title}`);
-        tasks.push("Implementar serviços e handlers de aplicação");
-        tasks.push("Adicionar suíte de testes unitários cobrindo todos os ACs");
-        tasks.push("Executar gate de qualidade automatizado e atualizar docs/STATE.md");
+        acs = [
+          `AC-1: Operação principal de '${title}' executada com conformidade`,
+          `AC-2: Tratamento de validação de entrada e restrições de domínio`,
+          `AC-3: Garantia de idempotência e ausência de regressões`
+        ];
+        tasks = [
+          `Modelar contratos e entidades de domínio para: ${title}`,
+          `Implementar regras de negócio e camada de serviço`,
+          `Integrar interface / endpoints e fluxo de execução`,
+          `Executar testes automatizados cobrindo todos os ACs (DoD)`
+        ];
       }
 
-      generatedCard = {
-        title: title || "Nova Funcionalidade SDD",
-        summary: `Especificação de requisito: ${userMessage}`,
-        tasks,
-        acs: [
-          `AC-1: Fluxo principal de ${title} executado com sucesso`,
-          `AC-2: Validação de entradas e tratamento de cenários de borda`
-        ]
-      };
+      generatedCard = { title, summary, tasks, acs };
 
       if (!aiResponseText) {
-        aiResponseText = `Analisei seu pedido com base nas regras do framework SDD. O requisito foi decomposto em critérios de aceite e tarefas técnicas aderentes à esteira. Veja o card abaixo pronto para inserção no Kanban.`;
+        aiResponseText = `Analisei sua solicitação como Harness Master. O requisito foi enquadrado no padrão SDD (Tier Pequeno), com critérios de aceite Given/When/Then e tarefas decompostas prontas para a esteira. Veja a especificação abaixo:`;
       }
-    } else if (!aiResponseText) {
-      aiResponseText = `Sou o Harness Master do SDD. No momento, o projeto está na fase "${analysis.currentStage}". Próximo passo registrado: "${analysis.nextStep}". Como posso ajudar a detalhar novos requisitos ou esclarecer o fluxo da esteira?`;
     }
 
     return {
@@ -202,52 +177,5 @@ Mensagem do Desenvolvedor:
       text: aiResponseText,
       generatedCard,
     };
-  }
-
-  // Construtor de prompts para disparo do Dev Agent e QA Agent via CLI
-  buildAgentExecutionPrompt({ agentType, cardId, specPath, tasksPath, projectDir = this.projectDir }) {
-    const analysis = this.analyzeCurrentState();
-    let specContent = "";
-    let tasksContent = "";
-
-    if (specPath && existsSync(join(projectDir, specPath))) {
-      try { specContent = readFileSync(join(projectDir, specPath), "utf8"); } catch {}
-    }
-    if (tasksPath && existsSync(join(projectDir, tasksPath))) {
-      try { tasksContent = readFileSync(join(projectDir, tasksPath), "utf8"); } catch {}
-    }
-
-    if (agentType === "dev") {
-      return `
-[DEV AGENT - EXECUÇÃO SDD]
-Você é o Agente Desenvolvedor encarregado de implementar a feature ${cardId}.
-Princípios:
-1. A Spec é a fonte da verdade e o contrato imutável.
-2. Siga estritamente os Critérios de Aceite (ACs).
-3. Respeite as camadas de arquitetura (DDD / Clean Arch) definidas no projeto.
-4. Não introduza SPEC_DEVIATION sem justificativa técnica.
-
-${specContent ? `### SPEC.MD ATIVA:\n${specContent}\n` : ""}
-${tasksContent ? `### TASKS.MD:\n${tasksContent}\n` : ""}
-
-Execute a implementação do código no diretório de trabalho.
-`;
-    }
-
-    if (agentType === "qa") {
-      return `
-[QA AGENT - VALIDAÇÃO E GATES SDD]
-Você é o Agente de QA responsável por validar a entrega da feature ${cardId}.
-Princípios:
-1. Rode a suíte de testes automatizados do projeto.
-2. Mapeie cada AC-N da spec com o seu teste correspondente.
-3. Valide o Definition of Done (DoD).
-4. Emita o relatório de conformidade.
-
-${specContent ? `### CRITÉRIOS DE ACEITE:\n${specContent}\n` : ""}
-`;
-    }
-
-    return `[AI ARCHITECT] Conduzindo feature ${cardId}`;
   }
 }
