@@ -1,19 +1,21 @@
-# @igoruehara/spec-driven
+# KSpec SDD OS (`kspec`)
 
-Scaffold de **Spec-Driven Development (SDD)** para agentes de IA — [Claude Code](https://claude.com/claude-code),
-[Codex](https://developers.openai.com/codex/), Cursor, GitHub Copilot, Gemini CLI e Windsurf.
-Em qualquer projeto, rode um comando e ganhe a esteira completa: **Lean Inception → DDD →
-Technical Design Docs → SDD**, com skills, templates, gates de qualidade e continuidade entre sessões.
+Plataforma e Scaffold de **Spec-Driven Development (SDD)** para agentes de IA — [Claude Code](https://claude.com/claude-code), [Codex](https://developers.openai.com/codex/), Cursor, GitHub Copilot, Gemini CLI e Windsurf.
+
+Inclui **Interface Visual Interativa (BuildX SDD OS)** com Kanban, Spec Editor e **Harness Master** integrados diretamente aos CLIs de LLMs instaladas na sua máquina, com **persistência 100% orientada a arquivos (Zero Database)**.
 
 ```bash
-# no diretório do seu projeto (menu interativo pergunta quais clientes gerar)
-npx @igoruehara/spec-driven
+# 🚀 Iniciar a interface visual interativa (Kanban + Spec Editor + Projetos)
+npx kspec ui
+
+# ou no diretório do seu projeto para scaffoldar a esteira SDD
+npx kspec
 
 # ou criando numa pasta nova
-npx @igoruehara/spec-driven meu-projeto
+npx kspec meu-projeto
 
 # não-interativo: escolha os clientes pela flag (ao menos um é obrigatório)
-npx @igoruehara/spec-driven --agent=claude,cursor   # Claude + Cursor
+npx kspec --agent=claude,cursor   # Claude + Cursor
 ```
 
 ## Clientes suportados

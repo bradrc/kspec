@@ -1,13 +1,15 @@
 {
-  "name": "@igoruehara/spec-driven",
-  "version": "0.1.11",
-  "description": "Scaffold de Spec-Driven Development (SDD) para agentes de IA (Claude Code, Codex, Cursor, Copilot, Gemini, Windsurf) — esteira Lean Inception + DDD + Technical Design Docs, com skills, templates e gates de qualidade. Use via npx em qualquer projeto.",
+  "name": "@acaldas12/kspec",
+  "version": "1.0.1",
+  "description": "KSpec SDD OS — Scaffold e Interface Visual de Spec-Driven Development (SDD) com Harness Master e integração a CLIs de IA (Claude Code, Gemini CLI, Codex, Cursor).",
   "type": "module",
   "bin": {
+    "kspec": "bin/cli.mjs",
     "spec-driven": "bin/cli.mjs"
   },
   "files": [
     "bin",
+    "src",
     "template",
     "README.md"
   ],
@@ -45,8 +47,10 @@
     "access": "public"
   },
   "scripts": {
+    "ui": "node bin/cli.mjs ui",
+    "dev": "node bin/cli.mjs ui",
     "pack:check": "npm pack --dry-run",
-    "test:scaffold": "node bin/cli.mjs .tmp-scaffold-test --all --force --yes",
-    "prepublishOnly": "node bin/cli.mjs .tmp-scaffold-test --all --force --yes"
+    "test:scaffold": "node bin/cli.mjs .tmp-scaffold-test --all --force --yes && rm -rf .tmp-scaffold-test",
+    "prepublishOnly": "node bin/cli.mjs .tmp-scaffold-test --all --force --yes && rm -rf .tmp-scaffold-test"
   }
 }

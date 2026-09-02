@@ -29,13 +29,16 @@ const MANIFEST = ".spec-driven/manifest.json";
 const args = process.argv.slice(2);
 const flags = args.filter((a) => a.startsWith("-"));
 const positional = args.filter((a) => !a.startsWith("-"));
-const cmd = positional[0] === "update" ? "update" : "init";
-const targetArg = (cmd === "update" ? positional[1] : positional[0]) || ".";
+const firstArg = positional[0];
+const cmd = firstArg === "update" ? "update" : firstArg === "ui" ? "ui" : "init";
+const targetArg = (cmd === "update" || cmd === "ui" ? positional[1] : positional[0]) || ".";
 const targetDir = resolve(process.cwd(), targetArg);
 const force = flags.includes("--force");
 const yes = flags.includes("--yes") || flags.includes("-y");
 const all = flags.includes("--all");
 const agentFlag = flags.find((f) => f.startsWith("--agent="));
+const portFlag = flags.find((f) => f.startsWith("--port="));
+const port = portFlag ? parseInt(portFlag.split("=")[1], 10) : 3000;
 
 const c = {
   bold: (s) => `\x1b[1m${s}\x1b[0m`,
@@ -274,7 +277,21 @@ async function update() {
   console.log(c.dim("  Rode /auditar e os testes para confirmar que tudo segue conforme.\n"));
 }
 
+async function startUi() {
+  const { KspecServer } = await import("../src/server/index.mjs");
+  console.log(c.bold("\n  KSpec SDD OS — Interface Visual & Harness Master"));
+  console.log(`  Diretório alvo: ${c.cyan(targetDir)}`);
+  console.log(`  Porta: ${c.green(String(port))}\n`);
+
+  const server = new KspecServer({ port, projectDir: targetDir });
+  server.start();
+}
+
 (async () => {
+  if (cmd === "ui") {
+    await startUi();
+    return;
+  }
   if (!existsSync(TEMPLATE_DIR)) {
     console.error(c.yellow("Template não encontrado. Pacote corrompido?"));
     process.exit(1);

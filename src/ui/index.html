@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BuildX SDD OS — Spec-Driven Development Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dark-theme">
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">
+          <span class="logo-text-bold">BuildX</span>
+          <span class="logo-text-badge">SDD OS</span>
+        </div>
+      </div>
+
+      <!-- Workspace Selector Dropdown -->
+      <div class="workspace-selector-container">
+        <div class="workspace-box" id="workspaceDropdownTrigger">
+          <div class="workspace-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09zM12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>
+          </div>
+          <div class="workspace-info">
+            <span class="workspace-label">WORKSPACE</span>
+            <span class="workspace-name" id="currentWorkspaceName">AcadeX</span>
+          </div>
+          <div class="workspace-chevron">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+        </div>
+        <!-- Workspace Dropdown List -->
+        <div class="workspace-dropdown-menu" id="workspaceMenu">
+          <!-- Renderizado via JS -->
+        </div>
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav class="nav-menu">
+        <button class="nav-item active" data-view="projects">
+          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          <span>Projetos</span>
+        </button>
+        <button class="nav-item" data-view="kanban">
+          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+          <span>Kanban (Work)</span>
+        </button>
+        <button class="nav-item" data-view="spec-editor">
+          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          <span>Spec Editor</span>
+        </button>
+      </nav>
+
+      <!-- Sidebar Footer (CLI status & Terminal toggle) -->
+      <div class="sidebar-footer">
+        <div class="cli-selector-box">
+          <label for="cliSelect">LLM CLI Runner:</label>
+          <select id="cliSelect" class="cli-select">
+            <option value="auto">Auto (Detectar)</option>
+            <option value="claude">Claude Code CLI</option>
+            <option value="gemini">Gemini CLI</option>
+            <option value="codex">Codex CLI</option>
+          </select>
+        </div>
+        <button class="terminal-toggle-btn" id="toggleTerminalBtn">
+          <span class="live-dot"></span>
+          <span>Agent CLI Terminal</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- 1. VIEW: PROJETOS -->
+      <section class="view-panel active" id="view-projects">
+        <header class="view-header projects-header">
+          <div>
+            <h1 class="view-title">Projetos</h1>
+            <p class="view-subtitle">Gerencie seus ambientes de SDD e Repositórios</p>
+          </div>
+          <button class="btn btn-primary" id="addWorkspaceBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>+ Adicionar Workspace</span>
+          </button>
+        </header>
+
+        <div class="projects-grid" id="projectsGrid">
+          <!-- Renderizado via JS -->
+        </div>
+      </section>
+
+      <!-- 2. VIEW: KANBAN -->
+      <section class="view-panel" id="view-kanban">
+        <header class="view-header kanban-header">
+          <div>
+            <h1 class="view-title">Interactive Kanban</h1>
+            <p class="view-subtitle">Collaborate with AI agents on SDD Tasks</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-secondary" id="refreshKanbanBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+              <span>Atualizar</span>
+            </button>
+            <button class="btn btn-primary" id="openSpecFromKanbanBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>Novo Requisito (SDD)</span>
+            </button>
+          </div>
+        </header>
+
+        <div class="kanban-board">
+          <!-- Coluna 1: Backlog -->
+          <div class="kanban-column" data-status="backlog">
+            <div class="column-header">
+              <span class="column-title">BACKLOG <span class="column-subtitle">(Requisitos)</span></span>
+              <span class="column-badge" id="count-backlog">0</span>
+            </div>
+            <div class="cards-container" id="col-backlog"></div>
+          </div>
+
+          <!-- Coluna 2: To-Do -->
+          <div class="kanban-column" data-status="todo">
+            <div class="column-header">
+              <span class="column-title">TO-DO <span class="column-subtitle">(Aprovados)</span></span>
+              <span class="column-badge" id="count-todo">0</span>
+            </div>
+            <div class="cards-container" id="col-todo"></div>
+          </div>
+
+          <!-- Coluna 3: Doing -->
+          <div class="kanban-column" data-status="doing">
+            <div class="column-header">
+              <span class="column-title">DOING <span class="column-subtitle">(Dev Agent)</span></span>
+              <span class="column-badge" id="count-doing">0</span>
+            </div>
+            <div class="cards-container" id="col-doing"></div>
+          </div>
+
+          <!-- Coluna 4: Testing -->
+          <div class="kanban-column" data-status="testing">
+            <div class="column-header">
+              <span class="column-title">TESTING <span class="column-subtitle">(QA Agent)</span></span>
+              <span class="column-badge" id="count-testing">0</span>
+            </div>
+            <div class="cards-container" id="col-testing"></div>
+          </div>
+
+          <!-- Coluna 5: Done -->
+          <div class="kanban-column" data-status="done">
+            <div class="column-header">
+              <span class="column-title">DONE <span class="column-subtitle">(Entregue)</span></span>
+              <span class="column-badge" id="count-done">0</span>
+            </div>
+            <div class="cards-container" id="col-done"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. VIEW: SPEC CONVERSATIONS / SPEC EDITOR -->
+      <section class="view-panel" id="view-spec-editor">
+        <header class="view-header spec-header">
+          <div>
+            <h1 class="view-title">Spec Conversations</h1>
+            <p class="view-subtitle">Chat with the Architect Agent to define features</p>
+          </div>
+          <button class="btn btn-primary" id="newConversationBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>+ New Conversation</span>
+          </button>
+        </header>
+
+        <div class="spec-editor-container">
+          <!-- Histórico de Conversas (Esquerda) -->
+          <div class="spec-history-sidebar">
+            <div class="history-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span>History</span>
+            </div>
+            <div class="history-list" id="conversationsList">
+              <!-- Renderizado via JS -->
+            </div>
+          </div>
+
+          <!-- Chat com o Harness Master (Direita) -->
+          <div class="spec-chat-container">
+            <div class="chat-messages" id="chatMessages">
+              <!-- Mensagens renderizadas via JS -->
+            </div>
+
+            <!-- Formulário de Envio -->
+            <div class="chat-input-area">
+              <form id="chatForm" class="chat-form">
+                <input
+                  type="text"
+                  id="chatInput"
+                  placeholder="Descreva uma funcionalidade ou alteração (ex: Remover botão 'New Customer' do menu principal)..."
+                  autocomplete="off"
+                />
+                <button type="submit" class="btn btn-primary btn-send">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Terminal Drawer (Console em tempo real de execução dos Agentes via CLI) -->
+    <div class="terminal-drawer" id="terminalDrawer">
+      <div class="terminal-header">
+        <div class="terminal-title">
+          <span class="live-dot"></span>
+          <span>Live Agent CLI Console</span>
+          <span class="terminal-status-badge" id="terminalStatus">Pronto</span>
+        </div>
+        <div class="terminal-actions">
+          <button class="terminal-btn" id="clearTerminalBtn" title="Limpar">Limpar</button>
+          <button class="terminal-btn" id="closeTerminalBtn" title="Fechar">✕</button>
+        </div>
+      </div>
+      <div class="terminal-body" id="terminalOutput">
+        <div class="terminal-line system">[SISTEMA] KSpec SDD OS Terminal inicializado. Monitorando subprocessos e CLI runners.</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

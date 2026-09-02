@@ -1,0 +1,33 @@
+{
+  "id": "conv-1788318756575",
+  "title": "Remover botão New Customer do menu ...",
+  "date": "2026-09-02",
+  "messages": [
+    {
+      "sender": "user",
+      "senderName": "You",
+      "time": "11:12 PM",
+      "text": "Remover botão New Customer do menu principal. Já existe na tela de Listagem de Customer"
+    },
+    {
+      "sender": "architect",
+      "senderName": "AI Architect",
+      "time": "11:12 PM",
+      "text": "Entendido! Analisei seu pedido sob a ótica do SDD e formulei a especificação técnica para o requisito. Abaixo está a quebra em tarefas estruturadas pronta para ir ao Kanban.",
+      "generatedCard": {
+        "title": "Remover botão New Customer do menu principal",
+        "summary": "Refinamento de requisito: Remover botão New Customer do menu principal. Já existe na tela de Listagem de Customer",
+        "tasks": [
+          "Localizar componente de navegação ou UI correspondente",
+          "Aplicar modificação visual e lógica no componente",
+          "Validar rotas e referências para evitar broken links",
+          "Testar a navegação e verificar se nenhum erro de renderização foi gerado"
+        ],
+        "acs": [
+          "Critério 1: Comportamento principal de Remover botão New Customer do menu principal validado",
+          "Critério 2: Casos de borda e regressão testados com sucesso"
+        ]
+      }
+    }
+  ]
+}

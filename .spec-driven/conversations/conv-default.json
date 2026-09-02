@@ -1,0 +1,13 @@
+{
+  "id": "conv-default",
+  "title": "Especificação de Nova Feature",
+  "date": "2026-09-02",
+  "messages": [
+    {
+      "sender": "architect",
+      "senderName": "AI Architect",
+      "time": "10:00",
+      "text": "Olá! Sou o Harness Master do SDD. Como posso ajudar a estruturar sua próxima feature ou refinar requisitos?"
+    }
+  ]
+}
