@@ -5,7 +5,7 @@
 
 // Estado Global da Aplicação
 const state = {
-  currentView: 'projects',
+  currentView: 'kanban',
   activeProjTab: 'roadmap',
   kanbanFilter: 'all',
   activeProject: null,
@@ -112,6 +112,7 @@ async function init() {
   await loadCliStatus();
   await loadProjects();
   await loadCurrentWorkspaceData();
+  switchView('kanban');
 }
 
 // Carrega os dados integrados do projeto ativo

@@ -38,6 +38,50 @@
   padding: 0;
 }
 
+/* ==========================================================================
+   Estilização Global de Scrollbar (Barra de Rolagem Moderna e Escura)
+   ========================================================================== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #090d16;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+  border: 2px solid #090d16;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3b82f6;
+}
+
+::-webkit-scrollbar-corner {
+  background: #090d16;
+}
+
+/* Suporte Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1e293b #090d16;
+}
+
+/* ==========================================================================
+   Elementos Ocultos (Simplificação de Interface)
+   ========================================================================== */
+.workspace-selector-container,
+.nav-item[data-view="projects"],
+.nav-item[data-view="harness"],
+.sidebar-footer {
+  display: none !important;
+}
+
 body.dark-theme {
   background-color: var(--bg-app);
   color: var(--text-primary);
@@ -529,12 +573,27 @@ body.dark-theme {
 }
 
 /* ==========================================================================
-   2. VIEW: INTERACTIVE KANBAN
+   2. VIEW: INTERACTIVE KANBAN (Quadro Expandido até o final da página)
    ========================================================================== */
+#view-kanban {
+  display: none;
+  height: 100vh;
+  box-sizing: border-box;
+  padding: 24px 32px 14px 32px;
+  overflow: hidden;
+}
+
+#view-kanban.active {
+  display: flex;
+  flex-direction: column;
+}
+
 .kanban-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
+  margin-bottom: 14px;
 }
 
 .header-actions {
@@ -543,23 +602,51 @@ body.dark-theme {
 }
 
 .kanban-board {
+  flex: 1;
+  min-height: 0;
   display: grid;
-  grid-template-columns: repeat(5, minmax(280px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(5, minmax(290px, 1fr));
+  gap: 16px;
   overflow-x: auto;
-  padding-bottom: 20px;
-  align-items: flex-start;
+  overflow-y: hidden;
+  padding-bottom: 8px;
+  align-items: stretch;
+}
+
+/* Scrollbar específico do Quadro Kanban (Horizontal) */
+.kanban-board::-webkit-scrollbar {
+  height: 10px;
+}
+
+.kanban-board::-webkit-scrollbar-track {
+  background: #0c121e;
+  border: 1px solid rgba(30, 41, 59, 0.6);
+  border-radius: 8px;
+  margin: 0 4px;
+}
+
+.kanban-board::-webkit-scrollbar-thumb {
+  background: #25334d;
+  border-radius: 8px;
+  border: 2px solid #0c121e;
+  transition: background 0.2s ease;
+}
+
+.kanban-board::-webkit-scrollbar-thumb:hover {
+  background: #4f46e5;
 }
 
 .kanban-column {
   background-color: #101726;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 16px;
+  padding: 16px 14px 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  min-height: 500px;
+  gap: 12px;
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
 }
 
 .column-header {
@@ -568,6 +655,7 @@ body.dark-theme {
   align-items: center;
   padding-bottom: 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  flex-shrink: 0;
 }
 
 .column-title {
@@ -593,10 +681,31 @@ body.dark-theme {
 }
 
 .cards-container {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  min-height: 100px;
+  padding-right: 4px;
+}
+
+/* Scrollbar dos containers internos de cards (Vertical) */
+.cards-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cards-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cards-container::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+
+.cards-container::-webkit-scrollbar-thumb:hover {
+  background: #334155;
 }
 
 /* Kanban Cards */
