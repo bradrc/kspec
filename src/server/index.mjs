@@ -116,6 +116,32 @@ export class KspecServer {
         return sendJson(kanban);
       }
 
+      // 5.1. Roadmap do Projeto
+      if (pathname === "/api/project/roadmap" && req.method === "GET") {
+        const roadmap = this.sddEngine.getProjectRoadmap(this.projectDir);
+        return sendJson(roadmap);
+      }
+
+      // 5.2. Métricas do Projeto
+      if (pathname === "/api/project/metrics" && req.method === "GET") {
+        const metrics = this.sddEngine.getProjectMetrics(this.projectDir);
+        return sendJson(metrics);
+      }
+
+      // 5.3. Catálogo de Documentações
+      if (pathname === "/api/project/docs" && req.method === "GET") {
+        const docs = this.sddEngine.getProjectDocs(this.projectDir);
+        return sendJson({ docs });
+      }
+
+      // 5.4. Conteúdo de um Documento específico
+      if (pathname === "/api/project/doc" && req.method === "GET") {
+        const docPath = url.searchParams.get("path");
+        if (!docPath) return sendJson({ error: "Parâmetro path ausente." }, 400);
+        const result = this.sddEngine.getDocContent(this.projectDir, docPath);
+        return sendJson(result);
+      }
+
       // 6. Mover Card / Atualizar Status no Kanban
       if (pathname === "/api/kanban/move" && req.method === "POST") {
         const { cardId, targetStatus, taskNum, triggerAgent = true, cliType = "auto" } = await readBody();
@@ -173,6 +199,20 @@ export class KspecServer {
         const specData = await readBody();
         const result = this.sddEngine.createSpecFromRequirement(this.projectDir, specData);
         return sendJson({ success: true, result });
+      }
+
+      // 8.1. Identificar Spec mais aderente para Bug ou Melhoria
+      if (pathname === "/api/harness/match-spec" && req.method === "POST") {
+        const { text } = await readBody();
+        const match = this.sddEngine.findMatchingSpec(this.projectDir, text || "");
+        return sendJson({ match });
+      }
+
+      // 8.2. Anexar Adendo (Subdocumento de Bug/Melhoria) à Spec
+      if (pathname === "/api/harness/attach-addendum" && req.method === "POST") {
+        const addendumData = await readBody();
+        const result = this.sddEngine.attachAddendumToSpec(this.projectDir, addendumData);
+        return sendJson(result);
       }
 
       // 9. Conversas do Spec Editor

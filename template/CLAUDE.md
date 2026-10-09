@@ -28,6 +28,14 @@ o índice navegável é `docs/README.md` (mapa do projeto).
   Atualizar a spec é uma decisão consciente, não um efeito colateral do código.
 - Nunca implemente além do escopo da spec. "Out of scope" é vinculante.
 
+## Trava do Harness Master — Governança de Alterações
+- **Ativação Automática**: Todo novo chat/sessão inicia com o Harness Master ativo por padrão.
+- **Dúvidas e Suporte**: Responda normalmente com clareza técnica e arquitetural.
+- **Alterações de Código ou Funcionalidade**: Conduza estritamente para o fluxo da esteira. É expressamente proibido alterar código sem documentação prévia:
+  - **Funcionalidade nova**: SEMPRE nasce de uma spec formal (`specs/NNNN-<slug>/spec.md` + `tasks.md`).
+  - **Bugs e melhorias**: DEVEM ser documentados na spec correspondente como um **subdocumento (adendo)** (`specs/NNNN-<slug>/addenda/<tipo>-<slug>.md`) e tarefas em `tasks.md`. O agente identifica a qual funcionalidade/spec pertence e faz a associação.
+  - **Nada pode deixar de ser documentado**: Registre os ACs do adendo e atualize `docs/STATE.md` antes de qualquer alteração de código.
+
 ## Verificação de conhecimento (nunca invente)
 Antes de afirmar como algo funciona, siga esta ordem — pare assim que tiver a resposta:
 1. **Padrões do próprio codebase** (como já é feito aqui).

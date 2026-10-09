@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BuildX SDD OS — Spec-Driven Development Platform</title>
+  <title>BuildX SDD OS — Acompanhamento de Entregas & Governança SDD</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -27,7 +27,7 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09zM12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>
           </div>
           <div class="workspace-info">
-            <span class="workspace-label">WORKSPACE</span>
+            <span class="workspace-label">WORKSPACE ATIVO</span>
             <span class="workspace-name" id="currentWorkspaceName">AcadeX</span>
           </div>
           <div class="workspace-chevron">
@@ -48,11 +48,23 @@
         </button>
         <button class="nav-item" data-view="kanban">
           <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
-          <span>Kanban (Work)</span>
+          <span>Kanban de Entregas</span>
         </button>
-        <button class="nav-item" data-view="spec-editor">
-          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-          <span>Spec Editor</span>
+        <button class="nav-item" data-view="roadmap">
+          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+          <span>Roadmap</span>
+        </button>
+        <button class="nav-item" data-view="metrics">
+          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span>Métricas</span>
+        </button>
+        <button class="nav-item" data-view="docs">
+          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+          <span>Documentações</span>
+        </button>
+        <button class="nav-item" data-view="harness">
+          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2z"/><path d="m9 12 2 2 4-4"/></svg>
+          <span>Harness Master</span>
         </button>
       </nav>
 
@@ -77,43 +89,149 @@
 
     <!-- Main Content -->
     <main class="main-content">
-      <!-- 1. VIEW: PROJETOS -->
+      <!-- 1. VIEW: PROJETOS (Exibe os 3 itens solicitados: Roadmap, Métricas e Documentações) -->
       <section class="view-panel active" id="view-projects">
         <header class="view-header projects-header">
           <div>
-            <h1 class="view-title">Projetos</h1>
-            <p class="view-subtitle">Gerencie seus ambientes de SDD e Repositórios</p>
+            <h1 class="view-title">Projetos & Workspace</h1>
+            <p class="view-subtitle">Acompanhe o Roadmap, Métricas e Documentações do sistema de forma organizada</p>
           </div>
-          <button class="btn btn-primary" id="addWorkspaceBtn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            <span>+ Adicionar Workspace</span>
-          </button>
+          <div class="header-actions">
+            <button class="btn btn-secondary" id="refreshProjectsBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+              <span>Sincronizar</span>
+            </button>
+            <button class="btn btn-primary" id="addWorkspaceBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>+ Adicionar Workspace</span>
+            </button>
+          </div>
         </header>
 
-        <div class="projects-grid" id="projectsGrid">
-          <!-- Renderizado via JS -->
+        <!-- Banner do Workspace Ativo -->
+        <div class="active-project-banner" id="activeProjectBanner">
+          <div class="active-project-details">
+            <div class="active-project-meta">
+              <span class="project-tag" id="activeProjStack">NODE_SDD</span>
+              <span class="active-badge" id="activeProjSddStatus">SDD Ativo</span>
+              <span class="governance-lock-badge">🛡️ Trava de Governança Ativa</span>
+            </div>
+            <h2 class="active-project-title" id="activeProjName">Carregando Workspace...</h2>
+            <p class="active-project-desc" id="activeProjSummary">Memória viva e governança de especificações.</p>
+            <div class="active-project-path-box">
+              <span class="path-label">Caminho:</span>
+              <code id="activeProjPath">/caminho/do/projeto</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seletor dos 3 Itens Solicitados na Tela de Projetos -->
+        <div class="project-sections-tabs">
+          <button class="proj-tab-btn active" data-proj-tab="roadmap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <span>1. Roadmap</span>
+          </button>
+          <button class="proj-tab-btn" data-proj-tab="metrics">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <span>2. Métricas</span>
+          </button>
+          <button class="proj-tab-btn" data-proj-tab="docs">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+            <span>3. Documentações</span>
+          </button>
+        </div>
+
+        <!-- Conteúdo dos 3 Itens na Tela de Projetos -->
+        <div class="project-items-container">
+          <!-- Item 1: Roadmap do Projeto -->
+          <div class="proj-tab-content active" id="proj-tab-roadmap">
+            <div class="roadmap-wrapper" id="projectRoadmapContainer">
+              <!-- Renderizado via JS -->
+            </div>
+          </div>
+
+          <!-- Item 2: Métricas do Projeto -->
+          <div class="proj-tab-content" id="proj-tab-metrics">
+            <div class="metrics-wrapper" id="projectMetricsContainer">
+              <!-- Renderizado via JS -->
+            </div>
+          </div>
+
+          <!-- Item 3: Documentações do Projeto -->
+          <div class="proj-tab-content" id="proj-tab-docs">
+            <div class="docs-browser-layout" id="projectDocsContainer">
+              <!-- Renderizado via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Seção de Todos os Workspaces Disponíveis -->
+        <div class="workspaces-section">
+          <div class="section-header">
+            <h3 class="section-title">Todos os Workspaces Conectados</h3>
+            <span class="section-subtitle">Alterne entre repositórios com um clique</span>
+          </div>
+          <div class="projects-grid" id="projectsGrid">
+            <!-- Renderizado via JS -->
+          </div>
         </div>
       </section>
 
-      <!-- 2. VIEW: KANBAN -->
+      <!-- 2. VIEW: KANBAN (Acompanhamento/Entrega de Specs, Correções e Melhorias) -->
       <section class="view-panel" id="view-kanban">
         <header class="view-header kanban-header">
           <div>
-            <h1 class="view-title">Interactive Kanban</h1>
-            <p class="view-subtitle">Collaborate with AI agents on SDD Tasks</p>
+            <h1 class="view-title">Acompanhamento de Entregas (Kanban SDD)</h1>
+            <p class="view-subtitle">Monitore o andamento de cada spec, correção e melhoria do sistema</p>
           </div>
           <div class="header-actions">
+            <div class="governance-status-tag">
+              <span class="live-dot"></span>
+              <span>Harness Ativo: 100% sob Spec / Adendos</span>
+            </div>
             <button class="btn btn-secondary" id="refreshKanbanBtn">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
               <span>Atualizar</span>
             </button>
-            <button class="btn btn-primary" id="openSpecFromKanbanBtn">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              <span>Novo Requisito (SDD)</span>
-            </button>
           </div>
         </header>
 
+        <!-- KPI Badges de Progresso no topo do Kanban -->
+        <div class="kanban-summary-bar">
+          <div class="summary-pill total">
+            <span class="pill-label">Total de Itens</span>
+            <span class="pill-value" id="kpiTotalCards">0</span>
+          </div>
+          <div class="summary-pill specs">
+            <span class="pill-label">📌 Specs (Features)</span>
+            <span class="pill-value" id="kpiTotalSpecs">0</span>
+          </div>
+          <div class="summary-pill fixes">
+            <span class="pill-label">🛠️ Correções</span>
+            <span class="pill-value" id="kpiTotalFixes">0</span>
+          </div>
+          <div class="summary-pill improvements">
+            <span class="pill-label">⚡ Melhorias</span>
+            <span class="pill-value" id="kpiTotalImprovements">0</span>
+          </div>
+          <div class="summary-pill progress">
+            <span class="pill-label">Taxa Geral de Entrega</span>
+            <span class="pill-value" id="kpiDeliveryRate">0%</span>
+          </div>
+        </div>
+
+        <!-- Filtros por Tipo de Item -->
+        <div class="kanban-filters-row">
+          <span class="filter-label">Filtrar por:</span>
+          <div class="filter-chips">
+            <button class="filter-chip active" data-filter="all">Todos (<span id="filterCountAll">0</span>)</button>
+            <button class="filter-chip chip-spec" data-filter="spec">📌 Specs (<span id="filterCountSpecs">0</span>)</button>
+            <button class="filter-chip chip-fix" data-filter="fix">🛠️ Correções (<span id="filterCountFixes">0</span>)</button>
+            <button class="filter-chip chip-improvement" data-filter="improvement">⚡ Melhorias (<span id="filterCountImprovements">0</span>)</button>
+          </div>
+        </div>
+
+        <!-- Quadro Kanban de Acompanhamento -->
         <div class="kanban-board">
           <!-- Coluna 1: Backlog -->
           <div class="kanban-column" data-status="backlog">
@@ -136,7 +254,7 @@
           <!-- Coluna 3: Doing -->
           <div class="kanban-column" data-status="doing">
             <div class="column-header">
-              <span class="column-title">DOING <span class="column-subtitle">(Dev Agent)</span></span>
+              <span class="column-title">DOING <span class="column-subtitle">(Em Execução)</span></span>
               <span class="column-badge" id="count-doing">0</span>
             </div>
             <div class="cards-container" id="col-doing"></div>
@@ -145,7 +263,7 @@
           <!-- Coluna 4: Testing -->
           <div class="kanban-column" data-status="testing">
             <div class="column-header">
-              <span class="column-title">TESTING <span class="column-subtitle">(QA Agent)</span></span>
+              <span class="column-title">TESTING <span class="column-subtitle">(Validação/QA)</span></span>
               <span class="column-badge" id="count-testing">0</span>
             </div>
             <div class="cards-container" id="col-testing"></div>
@@ -162,25 +280,87 @@
         </div>
       </section>
 
-      <!-- 3. VIEW: SPEC CONVERSATIONS / SPEC EDITOR -->
-      <section class="view-panel" id="view-spec-editor">
-        <header class="view-header spec-header">
+      <!-- 3. VIEW: ROADMAP DEDICADO -->
+      <section class="view-panel" id="view-roadmap">
+        <header class="view-header">
           <div>
-            <h1 class="view-title">Spec Conversations</h1>
-            <p class="view-subtitle">Chat with the Architect Agent to define features</p>
+            <h1 class="view-title">Roadmap de Entregas</h1>
+            <p class="view-subtitle">Horizontes Now / Next / Later e Adoção do Spec-Driven Development</p>
           </div>
-          <button class="btn btn-primary" id="newConversationBtn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            <span>+ New Conversation</span>
+          <button class="btn btn-secondary" id="refreshRoadmapViewBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+            <span>Atualizar Roadmap</span>
           </button>
         </header>
+        <div class="roadmap-wrapper" id="dedicatedRoadmapContainer">
+          <!-- Renderizado via JS -->
+        </div>
+      </section>
+
+      <!-- 4. VIEW: MÉTRICAS DEDICADAS -->
+      <section class="view-panel" id="view-metrics">
+        <header class="view-header">
+          <div>
+            <h1 class="view-title">Métricas de Entrega & Qualidade</h1>
+            <p class="view-subtitle">Lead Time, Throughput, Conclusão de Specs e Indicadores da Esteira</p>
+          </div>
+          <button class="btn btn-secondary" id="refreshMetricsViewBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+            <span>Atualizar Métricas</span>
+          </button>
+        </header>
+        <div class="metrics-wrapper" id="dedicatedMetricsContainer">
+          <!-- Renderizado via JS -->
+        </div>
+      </section>
+
+      <!-- 5. VIEW: DOCUMENTAÇÕES DEDICADAS -->
+      <section class="view-panel" id="view-docs">
+        <header class="view-header">
+          <div>
+            <h1 class="view-title">Documentações do Projeto</h1>
+            <p class="view-subtitle">Memória viva (STATE.md), Produto, Arquitetura e Engenharia</p>
+          </div>
+          <button class="btn btn-secondary" id="refreshDocsViewBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+            <span>Atualizar Docs</span>
+          </button>
+        </header>
+        <div class="docs-browser-layout" id="dedicatedDocsContainer">
+          <!-- Renderizado via JS -->
+        </div>
+      </section>
+
+      <!-- 6. VIEW: HARNESS MASTER (Orquestrador & Trava de Governança) -->
+      <section class="view-panel" id="view-harness">
+        <header class="view-header">
+          <div>
+            <h1 class="view-title">Harness Master — Orquestrador SDD</h1>
+            <p class="view-subtitle">Trava mandatória ativa: tira dúvidas e dá suporte; conduz qualquer alteração para o fluxo (spec ou adendo)</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-primary" id="newHarnessChatBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>+ Novo Chat com Harness</span>
+            </button>
+          </div>
+        </header>
+
+        <!-- Banner de Governança -->
+        <div class="harness-banner">
+          <div class="harness-banner-icon">🛡️</div>
+          <div class="harness-banner-text">
+            <h4>Trava de Governança Ativa Automaticamente</h4>
+            <p>Dúvidas e suporte técnico são respondidos normalmente. Qualquer alteração de código ou funcionalidade é conduzida obrigatoriamente para a esteira: <strong>novas features nascem de uma spec</strong>, enquanto <strong>bugs e melhorias são associados à respectiva spec pai como um subdocumento (adendo)</strong>.</p>
+          </div>
+        </div>
 
         <div class="spec-editor-container">
           <!-- Histórico de Conversas (Esquerda) -->
           <div class="spec-history-sidebar">
             <div class="history-title">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-              <span>History</span>
+              <span>Conversas do Harness</span>
             </div>
             <div class="history-list" id="conversationsList">
               <!-- Renderizado via JS -->
@@ -199,7 +379,7 @@
                 <input
                   type="text"
                   id="chatInput"
-                  placeholder="Descreva uma funcionalidade ou alteração (ex: Remover botão 'New Customer' do menu principal)..."
+                  placeholder="Tire dúvidas sobre a arquitetura ou descreva uma funcionalidade, bug ou melhoria..."
                   autocomplete="off"
                 />
                 <button type="submit" class="btn btn-primary btn-send">
@@ -230,20 +410,15 @@
       </div>
     </div>
 
-    <!-- Card Detail Modal / Drawer -->
+    <!-- Modal de Acompanhamento e Detalhes do Card (Read-Only) -->
     <div class="modal-overlay" id="cardDetailModal">
       <div class="modal-container">
         <div class="modal-header">
           <div class="modal-title-area">
+            <span class="card-type-badge spec" id="modalCardTypeBadge">SPEC</span>
             <span class="card-req-badge" id="modalCardBadge">REQ-0001</span>
-            <span class="modal-status-badge" id="modalCardAgent">Dev Agent</span>
-            <select id="modalStatusSelect" class="modal-status-select">
-              <option value="backlog">BACKLOG</option>
-              <option value="todo">TO-DO</option>
-              <option value="doing">DOING</option>
-              <option value="testing">TESTING</option>
-              <option value="done">DONE</option>
-            </select>
+            <span class="modal-status-badge" id="modalCardStatusBadge">TO-DO</span>
+            <span class="modal-agent-tag" id="modalCardAgent">Dev Agent</span>
           </div>
           <button class="modal-close-btn" id="closeCardModalBtn">✕</button>
         </div>
@@ -251,10 +426,22 @@
         <h2 class="modal-card-title" id="modalCardTitle">Título da Feature</h2>
         <p class="modal-card-summary" id="modalCardSummary">Resumo da especificação</p>
 
+        <!-- Barra de Progresso de Entrega no Modal -->
+        <div class="modal-progress-box">
+          <div class="modal-progress-header">
+            <span>Progresso da Entrega</span>
+            <span id="modalProgressText">0% concluído</span>
+          </div>
+          <div class="modal-progress-bar-bg">
+            <div class="modal-progress-bar-fill" id="modalProgressBarFill" style="width: 0%"></div>
+          </div>
+        </div>
+
         <!-- Tabs de Navegação do Modal -->
         <div class="modal-tabs">
-          <button class="modal-tab active" data-tab="tasks">Tasks & DoD (<span id="modalTasksCount">0</span>)</button>
+          <button class="modal-tab active" data-tab="tasks">Tarefas & DoD (<span id="modalTasksCount">0</span>)</button>
           <button class="modal-tab" data-tab="spec">Critérios de Aceite (Spec)</button>
+          <button class="modal-tab" data-tab="addenda">Subdocumentos / Adendos (<span id="modalAddendaCount">0</span>)</button>
           <button class="modal-tab" data-tab="history">Histórico do Agente (<span id="modalHistoryCount">0</span>)</button>
         </div>
 
@@ -267,6 +454,11 @@
                 <!-- Renderizado via JS -->
               </div>
             </div>
+            <!-- Seção de DoD -->
+            <div class="dod-section" id="modalDodContainer">
+              <h4 class="dod-title">Definition of Done (DoD)</h4>
+              <div class="dod-list" id="modalDodList"></div>
+            </div>
           </div>
 
           <!-- Tab 2: Spec Criteria -->
@@ -276,7 +468,14 @@
             </div>
           </div>
 
-          <!-- Tab 3: Agent History -->
+          <!-- Tab 3: Subdocumentos / Adendos (Bugs e Melhorias Vinculados à Spec) -->
+          <div class="modal-tab-content" id="tab-addenda">
+            <div class="addenda-list-group" id="modalAddendaList">
+              <!-- Renderizado via JS -->
+            </div>
+          </div>
+
+          <!-- Tab 4: Agent History -->
           <div class="modal-tab-content" id="tab-history">
             <div class="agent-history-list" id="modalAgentHistoryList">
               <!-- Renderizado via JS -->
@@ -284,19 +483,10 @@
           </div>
         </div>
 
-        <!-- Footer com Ações do Agente -->
+        <!-- Footer do Modal (Modo Acompanhamento) -->
         <div class="modal-footer">
-          <div class="modal-agent-buttons">
-            <button class="btn btn-secondary" id="modalRunDevBtn">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              <span>Disparar Dev Agent</span>
-            </button>
-            <button class="btn btn-secondary" id="modalRunQaBtn">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-              <span>Disparar QA Agent</span>
-            </button>
-          </div>
-          <button class="btn btn-primary" id="modalSaveBtn">Salvar Alterações</button>
+          <span class="modal-readonly-note">ℹ️ Modo Acompanhamento — governado por arquivos Markdown em specs/</span>
+          <button class="btn btn-secondary" id="modalCloseActionBtn">Fechar</button>
         </div>
       </div>
     </div>

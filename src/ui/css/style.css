@@ -1414,3 +1414,904 @@ body.dark-theme {
   line-height: 1.3;
 }
 
+/* ==========================================================================
+   Banner do Projeto Ativo & Tabs de Roadmap, Métricas, Documentações
+   ========================================================================== */
+.active-project-banner {
+  background: linear-gradient(135deg, rgba(21, 29, 48, 0.95), rgba(30, 41, 67, 0.95));
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+.active-project-banner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  background: linear-gradient(to bottom, #8b5cf6, #3b82f6);
+}
+
+.active-project-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.active-project-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.active-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background-color: rgba(16, 185, 129, 0.15);
+  color: var(--accent-emerald);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.active-project-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+
+.active-project-desc {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.active-project-path-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.active-project-path-box .path-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.active-project-path-box code {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: #a5b4fc;
+  background-color: #0b101c;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+/* Tabs dos 3 Itens Solicitados na Tela de Projetos */
+.project-sections-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+}
+
+.proj-tab-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.proj-tab-btn:hover {
+  background-color: #172138;
+  color: #fff;
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.proj-tab-btn.active {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(59, 130, 246, 0.2));
+  border-color: var(--primary);
+  color: #fff;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+}
+
+.proj-tab-content {
+  display: none;
+}
+
+.proj-tab-content.active {
+  display: block;
+}
+
+.workspaces-section {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+}
+
+/* ==========================================================================
+   Roadmap Styles
+   ========================================================================== */
+.roadmap-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.roadmap-objective-card {
+  background-color: #131c2e;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.roadmap-objective-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+}
+
+.roadmap-objective-text {
+  font-size: 1rem;
+  color: #fff;
+  line-height: 1.5;
+}
+
+.roadmap-horizons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+}
+
+.horizon-card {
+  background-color: #131c2e;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.horizon-card-header {
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.horizon-card-header.now {
+  background: rgba(16, 185, 129, 0.08);
+  border-bottom-color: rgba(16, 185, 129, 0.2);
+}
+
+.horizon-card-header.next {
+  background: rgba(245, 158, 11, 0.08);
+  border-bottom-color: rgba(245, 158, 11, 0.2);
+}
+
+.horizon-card-header.later {
+  background: rgba(148, 163, 184, 0.06);
+  border-bottom-color: rgba(148, 163, 184, 0.15);
+}
+
+.horizon-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.horizon-items-list {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.horizon-item-row {
+  background-color: #0e1524;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.horizon-item-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.horizon-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.horizon-item-meta span {
+  background-color: #1a2338;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.adoption-card {
+  background-color: #131c2e;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.adoption-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 14px;
+}
+
+.adoption-checklist {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 10px;
+}
+
+.adoption-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background-color: #0e1524;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.adoption-item.done {
+  color: var(--accent-emerald);
+  border-left: 2px solid var(--accent-emerald);
+}
+
+/* ==========================================================================
+   Metrics Styles
+   ========================================================================== */
+.metrics-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.metrics-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.metric-kpi-card {
+  background-color: #131c2e;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-kpi-card.highlight {
+  border-color: rgba(99, 102, 241, 0.4);
+  background: linear-gradient(135deg, #131c2e, #17233d);
+}
+
+.metric-kpi-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+}
+
+.metric-kpi-card.specs::after { background: var(--accent-purple); }
+.metric-kpi-card.fixes::after { background: var(--accent-amber); }
+.metric-kpi-card.improvements::after { background: var(--accent-cyan); }
+.metric-kpi-card.progress::after { background: var(--accent-emerald); }
+
+.kpi-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.kpi-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.kpi-subtext {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.distribution-card {
+  background-color: #131c2e;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.distribution-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 14px;
+}
+
+.distribution-flow-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.distribution-step {
+  flex: 1;
+  min-width: 110px;
+  background-color: #0e1524;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  text-align: center;
+}
+
+.distribution-step-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.distribution-step-count {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+/* ==========================================================================
+   Docs Browser Styles
+   ========================================================================== */
+.docs-browser-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 20px;
+  background-color: #131c2e;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  min-height: 550px;
+  overflow: hidden;
+}
+
+.docs-sidebar {
+  background-color: #0e1524;
+  border-right: 1px solid var(--border-color);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.docs-category-title {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 8px;
+}
+
+.docs-category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.doc-nav-item {
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.doc-nav-item:hover {
+  background-color: #172138;
+  color: #fff;
+}
+
+.doc-nav-item.active {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.doc-viewer-area {
+  padding: 24px;
+  overflow-y: auto;
+  max-height: 650px;
+}
+
+.doc-viewer-header {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 14px;
+  margin-bottom: 20px;
+}
+
+.doc-viewer-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.doc-viewer-path {
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.doc-viewer-body {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #cbd5e1;
+}
+
+.doc-viewer-body h1, .doc-viewer-body h2, .doc-viewer-body h3 {
+  color: #fff;
+  margin: 20px 0 10px;
+}
+
+.doc-viewer-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+
+.doc-viewer-body th, .doc-viewer-body td {
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.doc-viewer-body th {
+  background-color: #172138;
+  color: #fff;
+}
+
+.doc-viewer-body pre {
+  background-color: #090e18;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  overflow-x: auto;
+  margin: 14px 0;
+}
+
+.doc-viewer-body code {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+
+/* ==========================================================================
+   Kanban Summary Bar, Filters & Delivery Progress
+   ========================================================================== */
+.kanban-summary-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.summary-pill {
+  background-color: #131c2e;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 150px;
+}
+
+.summary-pill .pill-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.summary-pill .pill-value {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #fff;
+  margin-left: auto;
+}
+
+.summary-pill.progress .pill-value {
+  color: var(--accent-emerald);
+}
+
+/* Filtros por tipo */
+.kanban-filters-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.filter-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.filter-chips {
+  display: flex;
+  gap: 8px;
+}
+
+.filter-chip {
+  background-color: #131c2e;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filter-chip:hover {
+  background-color: #1a253d;
+  color: #fff;
+}
+
+.filter-chip.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.filter-chip.chip-spec.active {
+  background: #8b5cf6;
+  border-color: #8b5cf6;
+}
+
+.filter-chip.chip-fix.active {
+  background: #f59e0b;
+  border-color: #f59e0b;
+}
+
+.filter-chip.chip-improvement.active {
+  background: #06b6d4;
+  border-color: #06b6d4;
+}
+
+/* Badges de Tipo no Card do Kanban */
+.card-type-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card-type-badge.spec {
+  background-color: rgba(139, 92, 246, 0.2);
+  color: #a78bfa;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+}
+
+.card-type-badge.fix {
+  background-color: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.card-type-badge.improvement {
+  background-color: rgba(6, 182, 212, 0.2);
+  color: #22d3ee;
+  border: 1px solid rgba(6, 182, 212, 0.4);
+}
+
+/* Barra de Progresso de Entrega no Card */
+.card-progress-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 8px 0;
+}
+
+.card-progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.card-progress-bar-bg {
+  width: 100%;
+  height: 5px;
+  background-color: #0d1424;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.card-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #10b981);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* Progresso e Modo Somente Leitura no Modal */
+.modal-progress-box {
+  background-color: #0d1424;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.modal-progress-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.modal-progress-bar-bg {
+  width: 100%;
+  height: 8px;
+  background-color: #172138;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.modal-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8b5cf6, #10b981);
+  border-radius: 4px;
+}
+
+.modal-readonly-note {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.modal-agent-tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #a5b4fc;
+  background-color: rgba(99, 102, 241, 0.15);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.dod-section {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-color);
+}
+
+.dod-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+
+.dod-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  padding: 4px 0;
+}
+
+.dod-item.checked {
+  color: var(--accent-emerald);
+}
+
+/* ==========================================================================
+   Harness Master Governance Lock & Addenda Subdocuments Styles
+   ========================================================================== */
+.governance-lock-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background-color: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.governance-status-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: var(--accent-emerald);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.harness-banner {
+  background: linear-gradient(135deg, rgba(30, 27, 75, 0.95), rgba(17, 24, 39, 0.95));
+  border: 1px solid rgba(129, 140, 248, 0.35);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.harness-banner-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.harness-banner-text h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.harness-banner-text p {
+  font-size: 0.85rem;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+
+/* Tag de Spec Pai no Card do Kanban */
+.parent-spec-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  color: #818cf8;
+  background-color: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin: 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.card-addenda-counter {
+  font-size: 0.7rem;
+  color: var(--accent-cyan);
+  background-color: rgba(6, 182, 212, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+/* Lista de Adendos no Modal */
+.addenda-list-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.addendum-card {
+  background-color: #0f172a;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.addendum-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.addendum-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.addendum-card-summary {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.addendum-tasks-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.addendum-task-line {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.addendum-task-line.done {
+  color: var(--accent-emerald);
+}
+
+
+
