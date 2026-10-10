@@ -1216,18 +1216,23 @@ function appendMessageToChat(msg, shouldScroll = true) {
   let proposalHtml = '';
   if (msg.generatedCard) {
     const card = msg.generatedCard;
-    if (card.type === 'addendum') {
+    if (card.type === 'addendum' || card.type === 'continuation') {
+      const btnLabel = card.type === 'continuation'
+        ? `📌 Anexar Tarefas à Spec [${card.parentSpec?.code || ''}]`
+        : `📎 Anexar Adendo à Spec [${card.parentSpec?.code || ''}]`;
+      const headerTitle = card.headerTitle || (card.type === 'continuation' ? '🛡️ DETALHAMENTO DE TAREFAS DA SPEC' : '🛡️ PROPOSTA DE SUBDOCUMENTO / ADENDO');
+
       proposalHtml = `
         <div class="generated-card-box">
           <div class="generated-card-header">
-            <span>🛡️ PROPOSTA DE SUBDOCUMENTO / ADENDO</span>
+            <span>${headerTitle}</span>
           </div>
           <div class="generated-card-content">
             <div class="parent-spec-tag">
               <span>🔗 Vinculado a: <strong>${card.parentSpec?.code || ''} — ${card.parentSpec?.title || ''}</strong></span>
             </div>
             <div class="generated-card-title">
-              <span class="card-type-badge ${card.subType || 'fix'}">${card.subTypeLabel || 'Adendo'}</span>
+              <span class="card-type-badge ${card.subType || 'improvement'}">${card.subTypeLabel || 'Tarefas'}</span>
               <span>${card.title}</span>
             </div>
             <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">${card.summary}</p>
@@ -1235,8 +1240,8 @@ function appendMessageToChat(msg, shouldScroll = true) {
               ${(card.tasks || []).map((t) => `<div class="checklist-item"><input type="checkbox" disabled /> <span>${t}</span></div>`).join('')}
             </div>
             <div class="generated-card-action">
-              <button class="btn btn-primary btn-sm attach-addendum-btn" data-spec="${card.targetSpecFolder}" data-type="${card.subType}">
-                📎 Anexar Adendo à Spec [${card.parentSpec?.code || ''}]
+              <button class="btn btn-primary btn-sm attach-addendum-btn" data-spec="${card.targetSpecFolder}" data-type="${card.subType || 'improvement'}">
+                ${btnLabel}
               </button>
             </div>
           </div>

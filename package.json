@@ -1,6 +1,6 @@
 {
   "name": "@acaldas12/kspec",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "KSpec SDD OS — Scaffold e Interface Visual de Spec-Driven Development (SDD) com Harness Master e integração a CLIs de IA (Claude Code, Gemini CLI, Codex, Cursor).",
   "type": "module",
   "bin": {

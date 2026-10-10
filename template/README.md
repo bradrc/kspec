@@ -139,7 +139,7 @@ O que ela faz (e o que você faria à mão sem ela):
 5. No fim: registre decisões relevantes como ADR em `docs/architecture/adr/`, atualize `docs/glossary.md`
    e `docs/architecture/context-map.md` se a linguagem/fronteiras mudaram.
 
-Veja `specs/0001-exemplo-cota-de-uso/` para um exemplo preenchido.
+Use os templates em `specs/_templates/` para abrir cada nova funcionalidade.
 
 ## Definition of Ready (DoR) — antes de implementar
 - [ ] `spec.md` tem critérios de aceite testáveis (Given/When/Then)
@@ -172,9 +172,7 @@ boilerplate_sdd/
 ├── .claude/skills/            # kickoff·mapear·roadmap·camada-agentica·integracoes
 │                              # nova-feature·clarificar·validar·revisar-pr·setup-ci·handoff
 ├── specs/
-│   ├── _templates/            # os 5 templates da esteira
-│   ├── quick/                 # quick mode: tarefas trivial com rastro leve
-│   └── 0001-exemplo-cota-de-uso/  # exemplo preenchido
+│   └── _templates/            # templates da esteira (spec, tasks, design, domain, addendum)
 ├── docs/                      # agrupado por concern (nomes estáveis, não numerados)
 │   ├── README.md             # mapa do projeto — porta de entrada com link p/ cada artefato
 │   ├── glossary.md            # linguagem ubíqua global (anexo)

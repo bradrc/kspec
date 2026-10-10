@@ -24,7 +24,7 @@ export class CliRunner extends EventEmitter {
     for (const cli of clis) {
       try {
         const version = await new Promise((resolve) => {
-          const proc = spawn(cli.cmd, cli.args, { shell: false, timeout: 3000 });
+          const proc = spawn(cli.cmd, cli.args, { shell: false, timeout: 2500, stdio: ["ignore", "pipe", "pipe"] });
           let stdout = "";
           proc.stdout?.on("data", (d) => (stdout += d.toString()));
           proc.on("error", () => resolve(null));

@@ -4,14 +4,71 @@ import { CliRunner } from "./cli-runner.mjs";
 import { SddEngine } from "./sdd-engine.mjs";
 
 /**
+ * Sintetiza um título limpo, elegante e profissional para a Spec ou Adendo,
+ * eliminando vícios de linguagem coloquiais (ex: "apenas um html que consulta...").
+ */
+export function synthesizeCleanTitle(rawText, parentSpec = null) {
+  let cleaned = rawText
+    .trim()
+    .replace(/^(\s*[-*#>]+\s*)+/, "")
+    .replace(/^(quero|preciso|gostaria|fazer|criar|construir|desenvolver|adicionar|implementar|abrir)\s+(um|uma|o|a)?\s*/i, "")
+    .replace(/^(apenas|so|só)\s+(um|uma|o|a)?\s*/i, "")
+    .replace(/^(fazer|criar|montar|gerar)\s+(um|uma|o|a)?\s*/i, "")
+    .replace(/^(tela|pagina|interface)\s+(de|para|pra)?\s*/i, "Interface de ")
+    .replace(/\b(pra mim|para mim|no sistema|pro sistema|por favor)\b/gi, "")
+    .trim();
+
+  // Caso específico comum: consulta a endpoint público / CEP
+  if (/html.*endpoint.*public/i.test(cleaned) || /endpoint.*public.*html/i.test(cleaned)) {
+    if (parentSpec?.title) {
+      return `Interface Web para ${parentSpec.title}`;
+    }
+    return "Interface HTML para Consulta a Endpoint Público";
+  }
+
+  if (/\bcep\b/i.test(cleaned)) {
+    return "Consulta de Endereço por CEP";
+  }
+
+  // Capitalização em Title Case
+  const words = cleaned.split(/\s+/).filter(Boolean);
+  if (words.length === 0) {
+    return parentSpec ? `Ajuste em ${parentSpec.title}` : "Nova Funcionalidade SDD";
+  }
+
+  const lowercaseSmallWords = new Set([
+    "de", "da", "do", "das", "dos", "em", "na", "no", "nas", "nos",
+    "para", "pra", "por", "com", "sem", "e", "ou", "a", "o", "as", "os", "um", "uma"
+  ]);
+
+  let formatted = words
+    .map((w, idx) => {
+      const lower = w.toLowerCase();
+      if (idx > 0 && lowercaseSmallWords.has(lower)) {
+        return lower;
+      }
+      return lower.charAt(0).toUpperCase() + lower.slice(1);
+    })
+    .join(" ");
+
+  formatted = formatted.charAt(0).toUpperCase() + formatted.slice(1);
+
+  if (formatted.length < 5) {
+    return parentSpec ? `Detalhamento de ${parentSpec.title}` : "Nova Funcionalidade SDD";
+  }
+
+  return formatted.slice(0, 65).trim();
+}
+
+/**
  * Harness Master — O Orquestrador Central do Spec-Driven Development (SDD)
  *
  * Regras Inegociáveis:
  * 1. Funcionalidade nova sempre nasce de uma spec formal (spec.md + tasks.md).
- * 2. Bugs e melhorias são documentados em cada spec como um subdocumento (adendo).
- * 3. O Harness identifica a qual funcionalidade/spec pertence e faz a associação.
- * 4. Nada pode deixar de ser documentado antes de qualquer alteração de código.
- * 5. Dúvidas e suporte são respondidas normalmente; alterações conduzem estritamente para o fluxo.
+ * 2. Bugs, melhorias e continuações são associados à spec dona (specs/<spec>/addenda/ ou tasks.md).
+ * 3. O Harness identifica a qual funcionalidade/spec pertence pelo histórico e contexto.
+ * 4. Respostas a perguntas de esclarecimento continuam a spec em discussão, sem criar novas specs indesejadas.
+ * 5. Títulos são sempre profissionais e limpos.
  */
 export class HarnessMaster {
   constructor(projectDir = process.cwd(), cliRunner = new CliRunner()) {
@@ -50,43 +107,103 @@ export class HarnessMaster {
       } catch {}
     }
 
-    const specsDir = join(this.projectDir, "specs");
-    if (existsSync(specsDir)) {
-      try {
-        const specs = readdirSync(specsDir).filter((e) => !e.startsWith("_"));
-        analysis.stats.totalSpecs = specs.length;
-        if (specs.length > 0 && !analysis.activeFeature) {
-          analysis.activeFeature = specs[specs.length - 1];
-          analysis.currentStage = "SDD Execution";
-        }
-      } catch {}
+    const specs = this.sddEngine.getAllSpecs(this.projectDir);
+    analysis.stats.totalSpecs = specs.length;
+    if (specs.length > 0 && !analysis.activeFeature) {
+      analysis.activeFeature = specs[specs.length - 1].folder;
+      analysis.currentStage = "SDD Execution";
     }
 
     return analysis;
   }
 
-  // Classifica a intenção da mensagem do usuário
-  classifyUserIntent(userMessage) {
+  // Detecta se a mensagem atual ou o histórico recente apontam para uma spec existente
+  detectConversationContext(userMessage, conversationHistory = [], allSpecs = []) {
+    if (allSpecs.length === 0) return null;
+
+    // 1. Menção explícita na mensagem atual (ex: "spec 02", "spec 2", "req 2", "0002")
+    const directMatch = userMessage.match(/(?:spec|requisito|req)[^\d]*0*([1-9]\d*)/i);
+    if (directMatch) {
+      const num = parseInt(directMatch[1], 10);
+      const found = allSpecs.find((s) => s.num === num);
+      if (found) return { spec: found, isDirectMention: true, isAnsweringQuestion: false };
+    }
+
+    // 2. Busca reversa no histórico da conversa (últimas 10 mensagens)
+    const reversed = [...conversationHistory].reverse().slice(0, 10);
+    for (let i = 0; i < reversed.length; i++) {
+      const msg = reversed[i];
+      const text = msg.text || "";
+
+      // Verifica menção numérica a spec no histórico
+      const histMatch = text.match(/(?:spec|requisito|req)[^\d]*0*([1-9]\d*)/i);
+      if (histMatch) {
+        const num = parseInt(histMatch[1], 10);
+        const found = allSpecs.find((s) => s.num === num);
+        if (found) {
+          // Verifica se o arquiteto fez uma pergunta após essa menção
+          const lastArch = reversed.find((m) => m.sender === "architect");
+          const isAnsweringQuestion =
+            lastArch && (lastArch.text.includes("?") || /como|qual|descreva|quais/i.test(lastArch.text));
+          return { spec: found, isDirectMention: false, isAnsweringQuestion: Boolean(isAnsweringQuestion) };
+        }
+      }
+
+      // Verifica se houve proposta recente vinculada a uma spec
+      if (msg.generatedCard?.targetSpecFolder || msg.generatedCard?.parentSpec?.id) {
+        const folder = msg.generatedCard.targetSpecFolder || msg.generatedCard.parentSpec.id;
+        const found = allSpecs.find((s) => s.folder === folder);
+        if (found) {
+          return { spec: found, isDirectMention: false, isAnsweringQuestion: true };
+        }
+      }
+    }
+
+    // 3. Cruzamento semântico com títulos de specs existentes
+    const cleanUser = userMessage.toLowerCase();
+    for (const spec of allSpecs) {
+      const titleClean = spec.title.toLowerCase();
+      if (titleClean.length > 3 && cleanUser.includes(titleClean)) {
+        return { spec, isDirectMention: false, isAnsweringQuestion: false };
+      }
+    }
+
+    return null;
+  }
+
+  // Classifica a intenção com suporte a contexto conversacional
+  classifyUserIntent(userMessage, conversationContext, conversationHistory = []) {
     const clean = userMessage
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "");
 
-    const changeKeywords = [
-      "criar", "adicionar", "fazer", "implementar", "desenvolver", "construir", "novo", "nova",
-      "corrigir", "consertar", "ajustar", "arrumar", "bug", "erro", "falha", "quebrou", "fix",
-      "melhorar", "melhoria", "refatorar", "otimizar", "remover", "alterar", "modificar", "trocar"
+    // Se o usuário está em diálogo ativo sobre uma spec (ex: continuou ou respondeu a pergunta do arquiteto):
+    if (conversationContext?.spec && (conversationContext.isAnsweringQuestion || conversationContext.isDirectMention)) {
+      const isExplicitNewSpec = /nova spec|novo requisito|outra feature|nova feature independente/i.test(clean);
+      if (!isExplicitNewSpec) {
+        return {
+          type: "CONTINUE_OR_REFINE_SPEC",
+          targetSpec: conversationContext.spec,
+        };
+      }
+    }
+
+    // Verificação de pergunta de dúvida / suporte conceitual
+    const questionKeywords = [
+      "como funciona", "o que e", "o que sao", "qual a diferenca", "por que",
+      "explica", "duvida", "ajuda", "documentacao", "o que significa"
     ];
+    const isQuestion = userMessage.includes("?") || questionKeywords.some((q) => clean.includes(q));
+    const hasChangeIntent = /criar|adicionar|fazer|implementar|desenvolver|construir|corrigir|consertar|bug|fix|melhorar|remover/i.test(clean);
 
-    const isChange = changeKeywords.some((k) => clean.includes(k));
-
-    if (!isChange) {
+    if (isQuestion && !hasChangeIntent) {
       return { type: "SUPPORT_QUESTION" };
     }
 
+    // Verificação de Bug / Correção / Melhoria
     const bugKeywords = ["bug", "erro", "falha", "quebrou", "fix", "corrigir", "consertar", "problema", "não funciona", "nao funciona"];
     const improvementKeywords = ["melhorar", "melhoria", "refatorar", "otimizar", "ajustar", "performance", "limpar"];
-
     const isBug = bugKeywords.some((k) => clean.includes(k));
     const isImprovement = improvementKeywords.some((k) => clean.includes(k));
 
@@ -94,23 +211,52 @@ export class HarnessMaster {
       return {
         type: "BUG_OR_IMPROVEMENT",
         subType: isBug ? "fix" : "improvement",
+        targetSpec: conversationContext?.spec || null,
       };
     }
 
+    // Se o usuário pede "continuar", "dar andamento", "seguir", "prosseguir"
+    if (/continuar|prosseguir|dar andamento|seguir/i.test(clean) && conversationContext?.spec) {
+      return {
+        type: "CONTINUE_OR_REFINE_SPEC",
+        targetSpec: conversationContext.spec,
+      };
+    }
+
+    // Se não há palavras de ação nem contexto, é dúvida/suporte
+    const actionKeywords = [
+      "criar", "adicionar", "fazer", "implementar", "desenvolver", "construir", "novo", "nova",
+      "remover", "alterar", "modificar", "trocar", "quero", "preciso", "gostaria"
+    ];
+    if (!actionKeywords.some((k) => clean.includes(k))) {
+      return { type: "SUPPORT_QUESTION" };
+    }
+
+    // Se existe spec ativa no contexto de diálogo, associa a ela como refinamento
+    if (conversationContext?.spec) {
+      return {
+        type: "CONTINUE_OR_REFINE_SPEC",
+        targetSpec: conversationContext.spec,
+      };
+    }
+
+    // Caso padrão para novas adições sem contexto anterior: Nova Spec
     return { type: "NEW_FEATURE" };
   }
 
   async processUserMessage(userMessage, conversationHistory = [], cliType = "auto") {
     const analysis = this.analyzeCurrentState();
-    const intent = this.classifyUserIntent(userMessage);
+    const allSpecs = this.sddEngine.getAllSpecs(this.projectDir);
+    const context = this.detectConversationContext(userMessage, conversationHistory, allSpecs);
+    const intent = this.classifyUserIntent(userMessage, context, conversationHistory);
 
-    // 1. Caso DÚVIDA / SUPORTE: Responde normalmente como Arquiteto e orientador SDD
+    // 1. Caso DÚVIDA / SUPORTE: Responde com didática e reforça a governança
     if (intent.type === "SUPPORT_QUESTION") {
       const supportPrompt = `
 Você é o HARNESS MASTER e AI ARCHITECT do framework SDD (Spec-Driven Development).
-O usuário está fazendo uma pergunta de dúvida, suporte ou conceituação arquitetural.
-Responda com total clareza técnica, autoridade arquitetural e didática.
-Reforce brevemente que, caso o usuário decida implementar ou modificar qualquer funcionalidade ou código, o Harness Master ativará a esteira documental (spec formal para feature nova ou adendo para bug/melhoria).
+O usuário está fazendo uma pergunta de suporte conceitual ou arquitetural.
+Responda com total clareza técnica, autoridade arquitetural (DDD/Clean Arch) e didática.
+Reforce brevemente que alterações de código devem passar pela esteira (spec para features ou adendo para bugs/melhorias).
 
 Mensagem do Usuário: "${userMessage}"
 `;
@@ -126,14 +272,14 @@ Mensagem do Usuário: "${userMessage}"
       } catch {}
 
       if (!answerText) {
-        answerText = `Olá! Como Harness Master, estou aqui para apoiar em qualquer dúvida sobre a arquitetura, convenções DDD e a esteira Spec-Driven Development (SDD).
+        answerText = `Olá! Como Harness Master, estou à disposição para esclarecer qualquer dúvida sobre DDD, Clean Architecture e a esteira Spec-Driven Development (SDD).
 
-Em nossa esteira:
-- **Toda funcionalidade nova** nasce de uma especificação formal em \`specs/NNNN-<nome>/\` com critérios de aceite Given/When/Then e tarefas decompostas em \`tasks.md\`.
-- **Bugs e melhorias** são sempre associados à sua respectiva spec existente como um **subdocumento (adendo)** em \`specs/<spec>/addenda/\`.
-- **Nada é alterado no código** sem documentação prévia e atualização de \`docs/STATE.md\`.
+Na nossa governança:
+- **Novas funcionalidades** nascem de uma spec formal (\`specs/NNNN-<nome>/\`) com critérios de aceite e tarefas decompostas.
+- **Bugs e melhorias** são associados como subdocumentos (adendos) na spec dona em \`specs/<spec>/addenda/\`.
+- **Continuações de requisitos** (como detalhar a tela de uma spec existente) alimentam as tarefas da respectiva spec pai.
 
-Fique à vontade para tirar dúvidas técnicas ou conceituais. E quando desejar realizar qualquer alteração, eu o conduzirei para o fluxo!`;
+Fique à vontade para perguntar ou solicitar qualquer alteração!`;
       }
 
       return {
@@ -146,93 +292,152 @@ Fique à vontade para tirar dúvidas técnicas ou conceituais. E quando desejar 
       };
     }
 
-    // 2. Caso ALTERAÇÃO: Conduz estritamente para o fluxo SDD!
-    let generatedCard = null;
-    let aiResponseText = "";
+    // 2. Caso CONTINUAÇÃO / REFINAMENTO DE SPEC EXISTENTE (Evita criar Spec 03 indevida!)
+    if (intent.type === "CONTINUE_OR_REFINE_SPEC") {
+      const targetSpec = intent.targetSpec || context?.spec || allSpecs[0];
+      const cleanTitle = synthesizeCleanTitle(userMessage, targetSpec);
 
-    // 2.1. É Bug Fix ou Melhoria: O Harness identifica e associa à Spec correspondente!
-    if (intent.type === "BUG_OR_IMPROVEMENT") {
-      const match = this.sddEngine.findMatchingSpec(this.projectDir, userMessage);
-      const subType = intent.subType || "fix";
-      const subTypeLabel = subType === "fix" ? "Correção (Bug Fix)" : "Melhoria";
-
-      let title = userMessage.split(".")[0].replace(/^quero\s+|^preciso\s+que\s+|^corrigir\s+/i, "").slice(0, 60).trim();
-      if (!title) title = `${subTypeLabel} na funcionalidade`;
-
-      const summary = `Subdocumento de ${subTypeLabel.toLowerCase()} vinculado à spec pai. Registrado antes de qualquer modificação de código.`;
+      const summary = `Detalhamento e tarefas de implementação para '${targetSpec.title}', em conformidade com as diretrizes do SDD.`;
       const acs = [
-        `AC-${subType.toUpperCase()}-1: Validação de conformidade do ajuste de ${title}`,
-        `AC-${subType.toUpperCase()}-2: Ausência de efeitos colaterais e regressões no domínio`,
+        `AC-1: Interface e comportamento de '${cleanTitle}' implementados com sucesso`,
+        `AC-2: Integração ponta a ponta com validação e tratamento de exceções`,
+        `AC-3: Critérios validados pelo gate automatizado (npm test)`,
       ];
       const tasks = [
-        `Mapear causa raiz / impacto na camada de domínio da spec`,
-        `Aplicar ajuste em conformidade com os ACs`,
-        `Executar testes automatizados (gate executável)`,
+        `Construir interface/componente para '${cleanTitle}'`,
+        `Integrar regras de negócio e chamadas assíncronas ao endpoint`,
+        `Tratar estados de carregamento, sucesso e erros de validação`,
+        `Garantir cobertura com testes automatizados no gate (DoD)`,
       ];
 
-      generatedCard = {
-        type: "addendum",
-        subType,
-        subTypeLabel,
-        targetSpecFolder: match?.specFolder || analysis.activeFeature || "0001-core",
+      const generatedCard = {
+        type: "continuation",
+        headerTitle: `CONTINUAÇÃO / TAREFAS DA SPEC [${targetSpec.code}]`,
+        subType: "improvement",
+        subTypeLabel: "Detalhamento de Tarefas",
+        targetSpecFolder: targetSpec.folder,
         parentSpec: {
-          id: match?.specFolder || analysis.activeFeature || "0001-core",
-          code: match?.specCode || "REQ-0001",
-          title: match?.title || "Funcionalidade Principal",
+          id: targetSpec.folder,
+          code: targetSpec.code,
+          title: targetSpec.title,
         },
-        title,
+        title: cleanTitle,
         summary,
         acs,
         tasks,
       };
 
-      aiResponseText = `🛡️ **Trava de Governança SDD Ativada:**
-Pela regra inegociável da esteira, **nenhuma alteração de funcionalidade ou código pode ser feita sem documentação prévia**.
+      const aiResponseText = `🛡️ **Continuidade da [${targetSpec.code}] ${targetSpec.title}:**
+
+Compreendi a especificação fornecida (*"${cleanTitle}"*).
+
+Identifiquei que esta resposta é o **detalhamento de implementação da Spec existente [${targetSpec.code}]**, e **não** uma nova funcionalidade isolada. Formulei os critérios e as tarefas correspondentes vinculados a ela.
+
+👉 **Spec Associada:** \`[${targetSpec.code}] ${targetSpec.title}\` (\`specs/${targetSpec.folder}/\`)
+
+Clique no botão abaixo para anexar essas tarefas ao \`tasks.md\` da **${targetSpec.code}** na esteira:`;
+
+      return {
+        sender: "architect",
+        senderName: "Harness Master",
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        text: aiResponseText,
+        intent: "CONTINUE_OR_REFINE_SPEC",
+        generatedCard,
+      };
+    }
+
+    // 3. Caso BUG FIX OU MELHORIA
+    if (intent.type === "BUG_OR_IMPROVEMENT") {
+      const match = intent.targetSpec || this.sddEngine.findMatchingSpec(this.projectDir, userMessage);
+      const subType = intent.subType || "fix";
+      const subTypeLabel = subType === "fix" ? "Correção (Bug Fix)" : "Melhoria";
+
+      const targetSpecFolder = match?.specFolder || match?.folder || analysis.activeFeature || "0001-core";
+      const targetCode = match?.specCode || match?.code || "REQ-0001";
+      const targetTitle = match?.title || "Funcionalidade Principal";
+
+      const cleanTitle = synthesizeCleanTitle(userMessage, { title: targetTitle });
+      const summary = `Subdocumento de ${subTypeLabel.toLowerCase()} vinculado à spec pai. Registrado antes de qualquer modificação de código.`;
+      const acs = [
+        `AC-${subType.toUpperCase()}-1: Validação de conformidade do ajuste de ${cleanTitle}`,
+        `AC-${subType.toUpperCase()}-2: Ausência de efeitos colaterais e regressões no domínio`,
+      ];
+      const tasks = [
+        `Mapear causa raiz e impacto na camada de domínio da spec`,
+        `Aplicar ajuste de '${cleanTitle}' em conformidade com os ACs`,
+        `Executar testes automatizados no gate executável`,
+      ];
+
+      const generatedCard = {
+        type: "addendum",
+        headerTitle: `PROPOSTA DE SUBDOCUMENTO (${subTypeLabel.toUpperCase()})`,
+        subType,
+        subTypeLabel,
+        targetSpecFolder,
+        parentSpec: {
+          id: targetSpecFolder,
+          code: targetCode,
+          title: targetTitle,
+        },
+        title: cleanTitle,
+        summary,
+        acs,
+        tasks,
+      };
+
+      const aiResponseText = `🛡️ **Trava de Governança SDD Ativada:**
+Pela regra da esteira, nenhuma alteração de código pode ser feita sem rastreabilidade documental prévia.
 
 Identifiquei que esta solicitação é uma **${subTypeLabel}** associada à funcionalidade existente:
 👉 **\`[${generatedCard.parentSpec.code}] ${generatedCard.parentSpec.title}\`** (\`specs/${generatedCard.targetSpecFolder}/\`).
 
-Formulei os critérios de aceite e as tarefas correspondentes como um **Subdocumento (Adendo)** dentro da respectiva spec pai. Clique abaixo para registrar o adendo na esteira antes de prosseguir com a implementação:`;
-    }
+Formulei os critérios de aceite e tarefas como um **Subdocumento (Adendo)** dentro da respectiva spec pai. Clique abaixo para registrar o adendo na esteira antes de codificar:`;
 
-    // 2.2. É Nova Funcionalidade: Sempre nasce de uma nova Spec!
-    if (intent.type === "NEW_FEATURE") {
-      let title = userMessage.split(".")[0].replace(/^quero\s+|^preciso\s+que\s+/i, "").slice(0, 60).trim();
-      if (!title) title = "Nova Funcionalidade SDD";
-
-      const summary = `Especificação formal criada sob a esteira do Spec-Driven Development: ${userMessage}`;
-      const acs = [
-        `AC-1: Fluxo principal de '${title}' executado com sucesso e conformidade`,
-        `AC-2: Validação de entradas e regras de negócio no domínio`,
-        `AC-3: Tratamento de exceção e idempotência`,
-      ];
-      const tasks = [
-        `Modelar entidades de domínio e contratos para ${title}`,
-        `Implementar caso de uso na camada de aplicação`,
-        `Integrar interfaces e portas`,
-        `Escrever testes unitários e de integração cobrindo AC-1 a AC-3 (DoD)`,
-      ];
-
-      generatedCard = {
-        type: "new_spec",
-        title,
-        summary,
-        acs,
-        tasks,
+      return {
+        sender: "architect",
+        senderName: "Harness Master",
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        text: aiResponseText,
+        intent: "BUG_OR_IMPROVEMENT",
+        generatedCard,
       };
-
-      aiResponseText = `🛡️ **Trava de Governança SDD Ativada:**
-Pela regra da esteira, **toda funcionalidade nova SEMPRE deve nascer de uma spec**. Nenhuma linha de código será desenvolvida sem contrato prévio.
-
-Estruturei a especificação com critérios de aceite rigorosos em Given/When/Then e tarefas acionáveis com gates de teste. Clique abaixo para criar a nova spec no projeto:`;
     }
+
+    // 4. Caso NOVA FUNCIONALIDADE GENUÍNA
+    const cleanTitle = synthesizeCleanTitle(userMessage, null);
+    const summary = `Especificação formal criada sob a esteira do Spec-Driven Development: ${cleanTitle}`;
+    const acs = [
+      `AC-1: Fluxo principal de '${cleanTitle}' executado com sucesso e conformidade`,
+      `AC-2: Validação de entradas e regras de negócio no domínio`,
+      `AC-3: Tratamento de exceção e idempotência`,
+    ];
+    const tasks = [
+      `Modelar entidades de domínio e contratos para ${cleanTitle}`,
+      `Implementar caso de uso na camada de aplicação`,
+      `Integrar interfaces e portas`,
+      `Escrever testes automatizados cobrindo AC-1 a AC-3 (DoD)`,
+    ];
+
+    const generatedCard = {
+      type: "new_spec",
+      title: cleanTitle,
+      summary,
+      acs,
+      tasks,
+    };
+
+    const aiResponseText = `🛡️ **Trava de Governança SDD Ativada:**
+Pela regra da esteira, **toda funcionalidade nova SEMPRE nasce de uma spec formal**. Nenhuma linha de código será desenvolvida sem contrato prévio.
+
+Estruturei a especificação com critérios de aceite rigorosos em Given/When/Then e tarefas acionáveis com gates de teste. Clique abaixo para registrar a nova spec na esteira:`;
 
     return {
       sender: "architect",
       senderName: "Harness Master",
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       text: aiResponseText,
-      intent: intent.type,
+      intent: "NEW_FEATURE",
       generatedCard,
     };
   }

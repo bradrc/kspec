@@ -165,7 +165,12 @@ export class SddEngine {
 
     let entries = [];
     try {
-      entries = readdirSync(specsDir).filter((e) => !e.startsWith("_") && statSync(join(specsDir, e)).isDirectory());
+      entries = readdirSync(specsDir).filter((e) => {
+        if (e.startsWith("_") || e === "quick") return false;
+        const full = join(specsDir, e);
+        if (!statSync(full).isDirectory()) return false;
+        return existsSync(join(full, "spec.md")) || /^\d{4}-/.test(e);
+      });
     } catch {
       entries = [];
     }
@@ -177,6 +182,8 @@ export class SddEngine {
       const folderPath = join(specsDir, specFolder);
       const specFile = join(folderPath, "spec.md");
       const tasksFile = join(folderPath, "tasks.md");
+
+      if (!existsSync(specFile) && !existsSync(tasksFile)) continue;
 
       let title = specFolder.replace(/^\d+-/, "").replace(/-/g, " ");
       let summary = "";
@@ -1117,19 +1124,66 @@ ${
   }
 
   // Identifica a spec mais aderente para um determinado bug ou melhoria
-  findMatchingSpec(projectDir = this.baseDir, text) {
+  // Retorna todas as specs formais do projeto
+  getAllSpecs(projectDir = this.baseDir) {
     const specsDir = join(projectDir, "specs");
-    if (!existsSync(specsDir)) return null;
-
-    let entries = [];
+    if (!existsSync(specsDir)) return [];
     try {
-      entries = readdirSync(specsDir).filter((e) => !e.startsWith("_") && statSync(join(specsDir, e)).isDirectory());
+      const entries = readdirSync(specsDir).filter((e) => {
+        if (e.startsWith("_") || e === "quick") return false;
+        const full = join(specsDir, e);
+        if (!statSync(full).isDirectory()) return false;
+        return existsSync(join(full, "spec.md")) || /^\d{4}-/.test(e);
+      });
+
+      return entries.map((folder) => {
+        const numMatch = folder.match(/^(\d+)/);
+        const num = numMatch ? parseInt(numMatch[1], 10) : 1;
+        let title = folder.replace(/^\d+-/, "").replace(/-/g, " ");
+        const specFile = join(specsDir, folder, "spec.md");
+        if (existsSync(specFile)) {
+          try {
+            const raw = readFileSync(specFile, "utf8");
+            const m = raw.match(/^#\s+(?:Spec\s*—\s*)?(.*)$/m);
+            if (m) title = m[1].trim();
+          } catch {}
+        }
+        return {
+          folder,
+          num,
+          code: `REQ-${String(num).padStart(4, "0")}`,
+          title,
+          specPath: `specs/${folder}/spec.md`,
+          tasksPath: `specs/${folder}/tasks.md`,
+        };
+      });
     } catch {
-      return null;
+      return [];
+    }
+  }
+
+  // Identifica a spec mais aderente a um texto ou mensagem
+  findMatchingSpec(projectDir = this.baseDir, text) {
+    const specs = this.getAllSpecs(projectDir);
+    if (specs.length === 0) return null;
+
+    // 1. Prioridade Máxima: Menção explícita a número de spec (ex: "spec 02", "spec 2", "req-0002")
+    const numMatch = text.match(/(?:spec|requisito|req)[^\d]*0*([1-9]\d*)/i) || text.match(/\b0*([1-9]\d*)\b/);
+    if (numMatch) {
+      const targetNum = parseInt(numMatch[1], 10);
+      const exact = specs.find((s) => s.num === targetNum);
+      if (exact) {
+        return {
+          specFolder: exact.folder,
+          specCode: exact.code,
+          title: exact.title,
+          confidence: "alta",
+          score: 100,
+        };
+      }
     }
 
-    if (entries.length === 0) return null;
-
+    // 2. Análise Semântica de Palavras-Chave
     const queryWords = text
       .toLowerCase()
       .normalize("NFD")
@@ -1140,9 +1194,9 @@ ${
     let bestSpec = null;
     let highestScore = 0;
 
-    for (const folder of entries) {
+    for (const spec of specs) {
       let score = 0;
-      const folderNormalized = folder
+      const folderNormalized = spec.folder
         .toLowerCase()
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "");
@@ -1151,7 +1205,7 @@ ${
         if (folderNormalized.includes(w)) score += 3;
       }
 
-      const specFile = join(specsDir, folder, "spec.md");
+      const specFile = join(projectDir, spec.specPath);
       if (existsSync(specFile)) {
         try {
           const content = readFileSync(specFile, "utf8")
@@ -1166,20 +1220,18 @@ ${
 
       if (score > highestScore) {
         highestScore = score;
-        bestSpec = folder;
+        bestSpec = spec;
       }
     }
 
-    if (!bestSpec && entries.length > 0) {
-      bestSpec = entries[entries.length - 1];
+    if (!bestSpec && specs.length > 0) {
+      bestSpec = specs[specs.length - 1];
     }
 
-    const title = bestSpec.replace(/^\d+-/, "").replace(/-/g, " ");
-
     return {
-      specFolder: bestSpec,
-      specCode: `REQ-${bestSpec.slice(0, 4)}`,
-      title,
+      specFolder: bestSpec.folder,
+      specCode: bestSpec.code,
+      title: bestSpec.title,
       confidence: highestScore >= 3 ? "alta" : "sugerida",
       score: highestScore,
     };

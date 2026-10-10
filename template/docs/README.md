@@ -42,7 +42,7 @@ alwaysApply: false
 ## 📐 Specs — o contrato de cada feature
 > A pasta [`specs/`](../specs/) é a fonte viva; a lista abaixo é mantida no `/kickoff`
 > (atualize ao criar features com `/nova-feature`).
-- [`specs/0001-exemplo-cota-de-uso/`](../specs/0001-exemplo-cota-de-uso/spec.md) — exemplo preenchido
+- *Nenhuma spec ativa inicialmente — use `/nova-feature` ou o Harness Master para registrar a primeira.*
 
 ## 📖 Linguagem & convenções
 - **Glossário** (linguagem ubíqua) → [glossary.md](glossary.md)
