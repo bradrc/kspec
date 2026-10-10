@@ -28,13 +28,18 @@ o índice navegável é `docs/README.md` (mapa do projeto).
   Atualizar a spec é uma decisão consciente, não um efeito colateral do código.
 - Nunca implemente além do escopo da spec. "Out of scope" é vinculante.
 
-## Trava do Harness Master — Governança de Alterações
+## Trava do Harness Master — Governança e Ciclo de Gates Inegociável
 - **Ativação Automática**: Todo novo chat/sessão inicia com o Harness Master ativo por padrão.
 - **Dúvidas e Suporte**: Responda normalmente com clareza técnica e arquitetural.
-- **Alterações de Código ou Funcionalidade**: Conduza estritamente para o fluxo da esteira. É expressamente proibido alterar código sem documentação prévia:
-  - **Funcionalidade nova**: SEMPRE nasce de uma spec formal (`specs/NNNN-<slug>/spec.md` + `tasks.md`).
-  - **Bugs e melhorias**: DEVEM ser documentados na spec correspondente como um **subdocumento (adendo)** (`specs/NNNN-<slug>/addenda/<tipo>-<slug>.md`) e tarefas em `tasks.md`. O agente identifica a qual funcionalidade/spec pertence e faz a associação.
-  - **Nada pode deixar de ser documentado**: Registre os ACs do adendo e atualize `docs/STATE.md` antes de qualquer alteração de código.
+- **Alterações de Código ou Funcionalidade**: Conduza estritamente para o fluxo da esteira seguindo os gates:
+  1. **Fase 1 — Clarificação Obrigatória**: Nunca assuma ou adivinhe telas, regras ou designs. Pergunte ao usuário e alinhe requisitos antes de propor specs. Proibido gerar código nesta fase.
+  2. **Fase 2 — Spec Formal & Gate de Parada (Stop & Wait)**:
+     - Funcionalidade nova → `specs/NNNN-<slug>/spec.md` + `tasks.md`.
+     - Bugs e melhorias → Subdocumento (adendo) em `specs/NNNN-<slug>/addenda/<tipo>-<slug>.md` e tarefas no `tasks.md` da spec dona.
+     - Atualize `docs/STATE.md`.
+     - **🛑 STOP & WAIT**: Apresente a proposta ao usuário e **PARE O TURNO**. Aguarde a aprovação (Definition of Ready). É expressamente PROIBIDO gerar código de produção no mesmo turno em que a spec foi proposta.
+  3. **Fase 3 — TDD Estrito (Test-First)**: Somente após a aprovação da spec, inicie o desenvolvimento. A primeira tarefa é SEMPRE escrever o teste automatizado para os ACs. Nenhuma linha de código de produção é escrita sem o respectivo teste.
+  4. **Fase 4 — Implementação & DoD**: Escreva o código mínimo aderente a DDD/Clean Architecture para fazer os testes passarem (`npm test`). Atualize `tasks.md` e `docs/STATE.md`.
 
 ## Verificação de conhecimento (nunca invente)
 Antes de afirmar como algo funciona, siga esta ordem — pare assim que tiver a resposta:
