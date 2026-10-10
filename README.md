@@ -2,7 +2,7 @@
 
 Plataforma e Scaffold de **Spec-Driven Development (SDD)** para agentes de IA — [Claude Code](https://claude.com/claude-code), [Codex](https://developers.openai.com/codex/), Cursor, GitHub Copilot, Gemini CLI e Windsurf.
 
-Inclui **Interface Visual Interativa (BuildX SDD OS)** com Kanban, Spec Editor e **Harness Master** integrados diretamente aos CLIs de LLMs instaladas na sua máquina, com **persistência 100% orientada a arquivos (Zero Database)**.
+Inclui **Interface Visual Interativa (K-SPEC SDD OS)** com Kanban, Spec Editor e **Harness Master** integrados diretamente aos CLIs de LLMs instaladas na sua máquina, com **persistência 100% orientada a arquivos (Zero Database)**.
 
 ```bash
 # 🚀 Iniciar a interface visual interativa (Kanban + Spec Editor + Projetos)

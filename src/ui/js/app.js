@@ -1,5 +1,5 @@
 /**
- * BuildX SDD OS — Frontend Application Logic
+ * K-SPEC SDD OS — Frontend Application Logic
  * Acompanhamento de Entregas, Roadmap, Métricas e Documentações
  */
 
@@ -1150,7 +1150,7 @@ async function loadHarnessView() {
           sender: 'architect',
           senderName: 'Harness Master',
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          text: `🛡️ **Harness Master ativado automaticamente.**\n\nBem-vindo ao orquestrador do BuildX SDD OS. As regras fundamentais estão travadas:\n\n1. **Dúvidas & Suporte**: Você pode perguntar livremente sobre arquitetura, padrões DDD e a esteira. Responderei normalmente.\n2. **Qualquer Alteração de Código ou Funcionalidade**: Será conduzida obrigatoriamente para a esteira documental.\n   - **Nova funcionalidade** ➔ Nasce sempre de uma nova spec formal (\`specs/NNNN-<slug>/\`).\n   - **Bug ou melhoria** ➔ É identificado e associado à spec correspondente como um **subdocumento (adendo)** (\`specs/<spec>/addenda/\`).\n\nComo posso ajudar você agora?`,
+          text: `🛡️ **Harness Master ativado automaticamente.**\n\nBem-vindo ao orquestrador do K-SPEC SDD OS. As regras fundamentais estão travadas:\n\n1. **Dúvidas & Suporte**: Você pode perguntar livremente sobre arquitetura, padrões DDD e a esteira. Responderei normalmente.\n2. **Qualquer Alteração de Código ou Funcionalidade**: Será conduzida obrigatoriamente para a esteira documental.\n   - **Nova funcionalidade** ➔ Nasce sempre de uma nova spec formal (\`specs/NNNN-<slug>/\`).\n   - **Bug ou melhoria** ➔ É identificado e associado à spec correspondente como um **subdocumento (adendo)** (\`specs/<spec>/addenda/\`).\n\nComo posso ajudar você agora?`,
         },
       ],
     };
