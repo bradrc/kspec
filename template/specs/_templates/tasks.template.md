@@ -11,12 +11,12 @@ alwaysApply: false
 > Marque `[P]` nas tasks que podem rodar em paralelo (sem dependência entre si).
 
 ## Plano
-| #  | Task                                  | Cobre AC | Depende de | Gate (comando)        | Status |
-|----|---------------------------------------|----------|------------|-----------------------|--------|
-| 1  | <ex.: modelar agregado no domínio>    | AC-1     | —          | `<test do domínio>`   | todo   |
-| 2  | <ex.: caso de uso na application>     | AC-1,2   | 1          | `<test do caso de uso>`| todo  |
-| 3  | <ex.: adapter/repo na infrastructure> | AC-2     | 1          | `<test de integração>`| todo   |
-| 4  | <ex.: endpoint na interface> `[P]`    | AC-1,2   | 2,3        | `<test de aceite>`    | todo   |
+| #  | Task                                  | Cobre AC | Depende de | ADO ID | Gate (comando)        | Status |
+|----|---------------------------------------|----------|------------|--------|-----------------------|--------|
+| 1  | <ex.: modelar agregado no domínio>    | AC-1     | —          | —      | `<test do domínio>`   | todo   |
+| 2  | <ex.: caso de uso na application>     | AC-1,2   | 1          | —      | `<test do caso de uso>`| todo  |
+| 3  | <ex.: adapter/repo na infrastructure> | AC-2     | 1          | —      | `<test de integração>`| todo   |
+| 4  | <ex.: endpoint na interface> `[P]`    | AC-1,2   | 2,3        | —      | `<test de aceite>`    | todo   |
 
 > Uma task só vira `done` quando o **gate passa** (comandos em `docs/engineering/TESTING.md`) — não por
 > inspeção visual. Um commit por task.

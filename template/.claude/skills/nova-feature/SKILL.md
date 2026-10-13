@@ -59,12 +59,16 @@ Para cada artefato do tier, rascunhe a partir do template e **pare no gate para 
    template — tabela-verdade é mais densa e barata em tokens que prosa, e cada linha vira teste.
 5. **`tasks.md`** (sempre) — decomponha em tasks, cada uma mapeando para um ou mais AC + plano de teste.
 
-## Fase 4 — Quebra de tasks e tracking
+## Fase 4 — Quebra de tasks, tracking e Azure DevOps (ADO)
 1. Preencha a tabela de `tasks.md` (task → cobre AC → depende de → status).
-2. **(tools-aware) Criar issues:** se Jira/Linear estiver conectado, ofereça criar uma issue/subtask
-   por task (confirme antes). Escrita é **uma via** (repo → ferramenta); grave o mapeamento
-   `task # ↔ issue key` no `tasks.md`. **Se não houver MCP de gestão**, ofereça rodar `/integracoes`
-   para conectar agora; se o usuário recusar, deixe a coluna para preencher à mão.
+2. **Integração Azure DevOps (ADO - Obrigatório ofertar):**
+   - Logo após o DoR e o preenchimento das tasks, pergunte obrigatoriamente se deseja sincronizar no ADO.
+   - Se sim, acione o fluxo da skill **`/ado`**:
+     - Pergunte qual Epic associar (ou crie um novo).
+     - Pergunte o Iteration Path (Sprint).
+     - **Preview Gate Obrigatório:** Exiba a tabela/árvore prévia (Epic → Feature → Tasks) com ACs antes de criar.
+     - Após confirmação, crie no ADO via MCP ou AZ CLI e registre os IDs no frontmatter de `spec.md` e coluna `ADO ID` de `tasks.md`.
+3. **Outras ferramentas (Jira/Linear):** se Jira/Linear estiver conectado, ofereça criar as issues correspondentes.
 
 ## Fase 5 — Pronto para implementar
 - Cheque o **Definition of Ready** (ver `README.md`): AC testáveis, non-goals, termos no glossário,

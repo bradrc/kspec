@@ -47,7 +47,7 @@ já está disponível na sessão (`mcp__<servidor>__*`):
 
 **Puxe os insumos disponíveis** (só dos MCPs já conectados e validados) e cite a origem (link/ID):
 - Confluence / Notion: decisões de negócio, visão, domínio, arquitetura.
-- Jira / Linear: épicos, roadmap atual, stories abertas.
+- Jira / Linear / Azure DevOps: épicos, roadmap atual, stories abertas.
 - GitHub / cloud: contexto de código e infra (as-is).
 
 ## Fase 3 — Plano de escrita (write-side)
@@ -55,9 +55,9 @@ já está disponível na sessão (`mcp__<servidor>__*`):
    Verifique nome/disponibilidade na doc oficial — não invente nomes de pacote.
 2. **Defina os fluxos de escrita e quando disparam** — regra: **leia cedo, escreva no gate**:
    - Gate "aprovado" de vision/design/spec/roadmap → publica no Confluence/Notion.
-   - Quebra de `tasks.md` → cria issues/subtasks no Jira/Linear.
+   - Quebra de `tasks.md` → cria issues/subtasks no Jira/Linear ou Epics/Features/Tasks no Azure DevOps (skill `/ado`).
    - ADR novo → comenta no PR do GitHub/GitLab. Evento (aprovou/subiu) → Slack/Teams.
-   - Escrita é sempre **repo → ferramenta** (uma via); guarde a chave de volta (`jira:`, `confluence:`).
+   - Escrita é sempre **repo → ferramenta** (uma via); guarde a chave de volta (`jira:`, `ado_feature_id:`, `confluence:`).
    - ⚠️ **Antes da primeira escrita**, reconfirme a conta/workspace de destino (mesma trava).
 3. **Scaffolding (confirme antes).** Se aprovado, gere `.mcp.json` na raiz com placeholders,
    **sem segredos** (tokens via env / `claude mcp add`). Não commite credenciais.

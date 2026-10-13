@@ -36,8 +36,8 @@ o índice navegável é `docs/README.md` (mapa do projeto).
   2. **Fase 2 — Spec Formal & Gate de Parada (Stop & Wait)**:
      - Funcionalidade nova → `specs/NNNN-<slug>/spec.md` + `tasks.md`.
      - Bugs e melhorias → Subdocumento (adendo) em `specs/NNNN-<slug>/addenda/<tipo>-<slug>.md` e tarefas no `tasks.md` da spec dona.
-     - Atualize `docs/STATE.md`.
      - **🛑 STOP & WAIT**: Apresente a proposta ao usuário e **PARE O TURNO**. Aguarde a aprovação (Definition of Ready). É expressamente PROIBIDO gerar código de produção no mesmo turno em que a spec foi proposta.
+     - **Sincronização Azure DevOps (ADO)**: Logo após a aprovação da spec (Fase 2), o agente OBRIGATORIAMENTE pergunta se deseja enviar os itens para o Azure DevOps (via MCP ou AZ CLI). Se sim, pergunta o Epic associado (ou cria novo) e a Iteration Path (Sprint), exibe a pré-visualização completa (Epic → Feature → Tasks com ACs) e aguarda confirmação antes da criação. Grava os IDs gerados no frontmatter da spec (`ado_epic_id`, `ado_feature_id`, `ado_iteration_path`) e na coluna `ADO ID` de `tasks.md`.
   3. **Fase 3 — TDD Estrito (Test-First)**: Somente após a aprovação da spec, inicie o desenvolvimento. A primeira tarefa é SEMPRE escrever o teste automatizado para os ACs. Nenhuma linha de código de produção é escrita sem o respectivo teste.
   4. **Fase 4 — Implementação & DoD**: Escreva o código mínimo aderente a DDD/Clean Architecture para fazer os testes passarem (`npm test`). Atualize `tasks.md` e `docs/STATE.md`.
 

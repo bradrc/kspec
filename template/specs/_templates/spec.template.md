@@ -2,6 +2,9 @@
 name: spec
 description: Contrato da feature (critérios de aceite). Base enquanto a feature está ativa.
 alwaysApply: true
+ado_epic_id: null
+ado_feature_id: null
+ado_iteration_path: null
 ---
 
 # Spec — <nome da feature>

@@ -12,7 +12,7 @@ alwaysApply: false
 ## Ferramentas do time
 | Categoria          | Ferramenta            | Processo / observação            |
 |--------------------|-----------------------|----------------------------------|
-| Gestão de projeto  | <Jira/Trello/Linear>  | <Scrum / Kanban / Waterfall>     |
+| Gestão de projeto  | <Jira/Azure DevOps/Linear/Trello> | <Scrum / Kanban / Waterfall>     |
 | Documentação       | <Confluence/Notion/Evernote> | <onde mora a doc viva>    |
 | Código & CI        | <GitHub/GitLab/Bitbucket> | <fluxo de PR/MR>             |
 | Cloud              | <AWS/GCP/Azure>       | <regiões, contas>                |
@@ -26,6 +26,7 @@ alwaysApply: false
 | Ferramenta        | MCP server (proposto)        | Conta/workspace (validada) | O que habilita                       | Status   |
 |-------------------|------------------------------|----------------------------|--------------------------------------|----------|
 | Jira / Confluence | Atlassian (oficial)          | <workspace do projeto>     | ler/criar issues e páginas; sync     | proposto |
+| Azure DevOps (ADO)| Azure DevOps MCP ou AZ CLI   | <org/projeto>              | criar Epics, Features, Tasks e sync  | proposto |
 | Notion            | Notion (oficial)             | <business, não pessoal>    | publicar vision/roadmap; buscar docs | proposto |
 | GitHub            | GitHub (oficial)             | <org/repo>                 | PRs, issues, code review, releases   | proposto |
 | GitLab            | GitLab (oficial/community)   | <grupo/projeto>            | MRs, issues, pipelines               | proposto |
