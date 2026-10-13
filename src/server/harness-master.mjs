@@ -189,20 +189,24 @@ export class HarnessMaster {
       }
     }
 
-    // Verificação de pergunta de dúvida / suporte conceitual
-    const questionKeywords = [
+    // 1. Dúvida / Suporte / Investigação / Diagnóstico:
+    // O agente pode utilizar ferramentas e MCPs livremente para auxiliar e investigar sem necessidade de spec.
+    const supportKeywords = [
       "como funciona", "o que e", "o que sao", "qual a diferenca", "por que",
-      "explica", "duvida", "ajuda", "documentacao", "o que significa"
+      "explica", "explicar", "duvida", "ajuda", "documentacao", "o que significa",
+      "investigar", "investigue", "analisar", "analise", "consultar", "consulte",
+      "verificar", "verifique", "checar", "olhar", "veja", "diagnosticar", "suporte",
+      "log", "logs", "status", "onde fica", "onde esta", "me ajuda", "pesquise", "buscar"
     ];
-    const isQuestion = userMessage.includes("?") || questionKeywords.some((q) => clean.includes(q));
-    const hasChangeIntent = /criar|adicionar|fazer|implementar|desenvolver|construir|corrigir|consertar|bug|fix|melhorar|remover/i.test(clean);
+    const isSupport = userMessage.includes("?") || supportKeywords.some((q) => clean.includes(q));
+    const hasChangeIntent = /criar\s+|adicionar\s+|fazer\s+|implementar\s+|desenvolver\s+|construir\s+|corrigir\s+|consertar\s+|remover\s+|alterar\s+|modificar\s+/i.test(clean);
 
-    if (isQuestion && !hasChangeIntent) {
+    if (isSupport && !hasChangeIntent) {
       return { type: "SUPPORT_QUESTION" };
     }
 
-    // Verificação de Bug / Correção / Melhoria
-    const bugKeywords = ["bug", "erro", "falha", "quebrou", "fix", "corrigir", "consertar", "problema", "não funciona", "nao funciona"];
+    // 2. Verificação de Bug / Correção vs Melhoria
+    const bugKeywords = ["bug", "erro", "falha", "quebrou", "fix", "corrigir", "consertar", "problema", "não funciona", "nao funciona", "quebrado"];
     const improvementKeywords = ["melhorar", "melhoria", "refatorar", "otimizar", "ajustar", "performance", "limpar"];
     const isBug = bugKeywords.some((k) => clean.includes(k));
     const isImprovement = improvementKeywords.some((k) => clean.includes(k));
@@ -215,7 +219,7 @@ export class HarnessMaster {
       };
     }
 
-    // Se o usuário pede "continuar", "dar andamento", "seguir", "prosseguir"
+    // 3. Se o usuário pede "continuar", "dar andamento", "seguir", "prosseguir"
     if (/continuar|prosseguir|dar andamento|seguir/i.test(clean) && conversationContext?.spec) {
       return {
         type: "CONTINUE_OR_REFINE_SPEC",
@@ -223,7 +227,7 @@ export class HarnessMaster {
       };
     }
 
-    // Se não há palavras de ação nem contexto, é dúvida/suporte
+    // 4. Se não há palavras de ação nem contexto, trata como suporte
     const actionKeywords = [
       "criar", "adicionar", "fazer", "implementar", "desenvolver", "construir", "novo", "nova",
       "remover", "alterar", "modificar", "trocar", "quero", "preciso", "gostaria"
@@ -240,7 +244,7 @@ export class HarnessMaster {
       };
     }
 
-    // Caso padrão para novas adições sem contexto anterior: Nova Spec
+    // 5. Caso padrão para novas adições sem contexto anterior: Nova Spec
     return { type: "NEW_FEATURE" };
   }
 
@@ -250,13 +254,18 @@ export class HarnessMaster {
     const context = this.detectConversationContext(userMessage, conversationHistory, allSpecs);
     const intent = this.classifyUserIntent(userMessage, context, conversationHistory);
 
-    // 1. Caso DÚVIDA / SUPORTE: Responde com didática e reforça a governança
+    // 1. Caso DÚVIDA / SUPORTE / DIAGNÓSTICO:
+    // O agente usa ferramentas MCP e conhecimento livremente para ajudar o usuário sem criar spec.
+    // Se for detectada a necessidade de alteração de código, orienta o direcionamento para o fluxo.
     if (intent.type === "SUPPORT_QUESTION") {
       const supportPrompt = `
 Você é o HARNESS MASTER e AI ARCHITECT do framework SDD (Spec-Driven Development).
-O usuário está fazendo uma pergunta de suporte conceitual ou arquitetural.
-Responda com total clareza técnica, autoridade arquitetural (DDD/Clean Arch) e didática.
-Reforce brevemente que alterações de código devem passar pela esteira (spec para features ou adendo para bugs/melhorias).
+O usuário está solicitando suporte, diagnóstico ou esclarecimento de dúvidas.
+Diretrizes:
+- Você tem total liberdade para usar ferramentas e MCPs de consulta/diagnóstico para auxiliar o usuário.
+- Responda com clareza técnica, autoridade arquitetural (DDD/Clean Arch) e didática.
+- Não altere arquivos de código de produção e não crie specs desnecessárias nesta fase de suporte.
+- Se a dúvida revelar um bug que realmente demande alteração de código, sinalize ao usuário que a correção deve ser conduzida pelo fluxo do SDD (como um adendo na respectiva spec dona).
 
 Mensagem do Usuário: "${userMessage}"
 `;
@@ -272,14 +281,14 @@ Mensagem do Usuário: "${userMessage}"
       } catch {}
 
       if (!answerText) {
-        answerText = `Olá! Como Harness Master, estou à disposição para esclarecer qualquer dúvida sobre DDD, Clean Architecture e a esteira Spec-Driven Development (SDD).
+        answerText = `Olá! Como Harness Master, estou à disposição para suporte, esclarecimento de dúvidas e diagnósticos arquiteturais.
 
-Na nossa governança:
-- **Novas funcionalidades** nascem de uma spec formal (\`specs/NNNN-<nome>/\`) com critérios de aceite e tarefas decompostas.
-- **Bugs e melhorias** são associados como subdocumentos (adendos) na spec dona em \`specs/<spec>/addenda/\`.
-- **Continuações de requisitos** (como detalhar a tela de uma spec existente) alimentam as tarefas da respectiva spec pai.
+No modo **Suporte e Diagnóstico**:
+- Podemos inspecionar logs, consultar documentação, investigar causas e analisar o sistema livremente.
+- Nenhuma spec ou alteração de código é exigida para consultas e investigações.
+- Caso durante a análise identifiquemos que existe um bug ou necessidade real de alteração de código, conduzirei você diretamente para a esteira SDD (vinculando a correção à spec correspondente através de um adendo formal).
 
-Fique à vontade para perguntar ou solicitar qualquer alteração!`;
+Como posso te ajudar agora?`;
       }
 
       return {

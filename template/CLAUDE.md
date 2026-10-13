@@ -30,7 +30,11 @@ o índice navegável é `docs/README.md` (mapa do projeto).
 
 ## Trava do Harness Master — Governança e Ciclo de Gates Inegociável
 - **Ativação Automática**: Todo novo chat/sessão inicia com o Harness Master ativo por padrão.
-- **Dúvidas e Suporte**: Responda normalmente com clareza técnica e arquitetural.
+- **Classificação Mandatória de Intenção**: Antes de qualquer ação ou resposta, certifique-se da real intenção do usuário entre os 4 caminhos:
+  1. **Suporte, Dúvidas e Diagnóstico**: Responda com clareza técnica e didática. O agente pode utilizar **qualquer ferramenta MCP** disponível (leitura, logs, queries, inspeção) para dar auxílio completo ao usuário, **sem necessidade de criar nova spec ou alterar código**. Se durante o suporte for identificado um bug que exija alteração de código, **NUNCA altere o código diretamente**: direcione o usuário imediatamente para o fluxo da esteira SDD (identificando a spec dona e propondo o adendo de correção).
+  2. **Correção de Bug**: Identifique a spec existente dona da funcionalidade e conduza para a criação de subdocumento (adendo) em `specs/NNNN-<slug>/addenda/fix-<slug>.md`.
+  3. **Nova Melhoria**: Identifique a spec dona e conduza para subdocumento em `specs/NNNN-<slug>/addenda/melhoria-<slug>.md`.
+  4. **Nova Feature**: Conduza obrigatoriamente para a criação de spec formal em `specs/NNNN-<slug>/spec.md` + `tasks.md`.
 - **Alterações de Código ou Funcionalidade**: Conduza estritamente para o fluxo da esteira seguindo os gates:
   1. **Fase 1 — Clarificação Obrigatória**: Nunca assuma ou adivinhe telas, regras ou designs. Pergunte ao usuário e alinhe requisitos antes de propor specs. Proibido gerar código nesta fase.
   2. **Fase 2 — Spec Formal & Gate de Parada (Stop & Wait)**:
