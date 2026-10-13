@@ -61,9 +61,9 @@ Para cada artefato do tier, rascunhe a partir do template e **pare no gate para 
 
 ## Fase 4 — Quebra de tasks, tracking e Azure DevOps (ADO)
 1. Preencha a tabela de `tasks.md` (task → cobre AC → depende de → status).
-2. **Integração Azure DevOps (ADO - Obrigatório ofertar):**
-   - Logo após o DoR e o preenchimento das tasks, pergunte obrigatoriamente se deseja sincronizar no ADO.
-   - Se sim, acione o fluxo da skill **`/ado`**:
+2. **Integração Azure DevOps (ADO - Opcional para Novas Features):**
+   - Logo após o DoR e o preenchimento das tasks, o agente pode oferecer a sincronização no ADO (etapa opcional — se recusada, a esteira segue normalmente para a Fase 5).
+   - Se o usuário aceitar, acione o fluxo da skill **`/ado`**:
      - Pergunte qual Epic associar (ou crie um novo).
      - Pergunte o Iteration Path (Sprint).
      - **Preview Gate Obrigatório:** Exiba a tabela/árvore prévia (Epic → Feature → Tasks) com ACs antes de criar.

@@ -8,9 +8,10 @@ description: Use para integrar a esteira SDD com o Azure DevOps (ADO) via MCP Se
 Permite sincronizar os artefatos de especificação da esteira SDD com o Azure DevOps (ADO), mantendo rastreabilidade bidirecional entre o código/spec e os Work Items da nuvem.
 
 ## Princípios de Operação
+- **Escopo Inicial (Apenas Novas Features)**: Neste primeiro momento, a sincronização com o ADO é direcionada exclusivamente para **novas features** (criação da tríade Epic -> Feature -> Tasks). Bugs e melhorias continuam com o fluxo de adendos local.
+- **Integração Totalmente Opcional**: A sincronização com o Azure DevOps **NÃO é obrigatória**. O agente pode oferecer a sincronização, mas se o usuário optar por não enviar, a esteira prossegue imediatamente para o TDD sem nenhum bloqueio.
 - **Detecção Híbrida**: O agente prioriza o MCP do Azure DevOps se disponível na sessão (`mcp__azure_devops__*`); caso não esteja, utiliza comandos do `az devops` CLI (`az boards work-item`).
-- **Trava de Segurança pós-Fase 2**: O envio ao ADO é ofertado obrigatoriamente logo após o Definition of Ready (DoR) ser aprovado na Fase 2.
-- **Preview Obrigatório (Preview Gate)**: NUNCA crie itens no ADO sem exibir antes a árvore hierárquica completa e obter a confirmação explícita do usuário.
+- **Preview Obrigatório (Preview Gate)**: Caso o usuário opte por sincronizar, NUNCA crie itens no ADO sem exibir antes a árvore hierárquica completa e obter a confirmação explícita.
 - **Rastreabilidade**: Os IDs criados são registrados no frontmatter da `spec.md` e na tabela de `tasks.md`.
 
 ---
