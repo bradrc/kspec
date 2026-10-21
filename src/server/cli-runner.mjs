@@ -122,7 +122,7 @@ Diretrizes Obrigatórias de Implementação:
 4. Testes e Qualidade: Rodar apenas os testes específicos do que foi desenvolvido na tarefa (não rodar a suíte completa durante o desenvolvimento).
 5. Integração ADO: Quando houver integração com o Azure DevOps, atualize o status do Work Item correspondente para Closed/Done ao concluir a task.`;
     } else if (agentType === "qa") {
-      enrichedPrompt = `[QA AGENT - VALIDAÇÃO E GATES SDD]\nVocê é o Agente de QA da esteira SDD.\n${specPath ? `Valide a implementação contra a spec em: ${specPath}\n` : ""}Instrução: ${prompt}\nExecute a suíte de testes automatizados completa (agora que todo o desenvolvimento foi concluído) e valide se todos os critérios de aceite (ACs) foram atendidos sem regressão (Definition of Done).`;
+      enrichedPrompt = `[QA AGENT - VALIDAÇÃO E GATES SDD]\nVocê é o Agente de QA da esteira SDD.\n${specPath ? `Valide a implementação contra a spec em: ${specPath}\n` : ""}Instrução: ${prompt}\nExecute a suíte de testes automatizados completa (agora que todo o desenvolvimento foi concluído) e valide se todos os critérios de aceite (ACs) foram atendidos sem regressão. Ao final, pergunte obrigatoriamente ao usuário se deseja executar a fase de testes E2E com Playwright para primeira validação ponta a ponta.`;
     } else if (agentType === "architect") {
       enrichedPrompt = `[AI ARCHITECT - SDD HARNESS]\nVocê é o Agente Arquiteto e Harness Master do SDD.\n${prompt}`;
     }

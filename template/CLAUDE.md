@@ -55,6 +55,12 @@ o índice navegável é `docs/README.md` (mapa do projeto).
      - **Execução da Suíte Completa Apenas no Fim**: **Apenas quando acabar TODO o desenvolvimento** (todas as tarefas da spec/lote concluídas), o agente deve rodar a **suíte de testes completa** (`npm test`, build e análise estática) para validação integral de regressão antes do fechamento.
      - **Atualização Mandatória no ADO**: Quando houver integração com o ADO, ao concluir cada task no projeto (`tasks.md`), o agente deve atualizar o status do Work Item correspondente no ADO (marcando-o como `Done` ou `Closed`). Ao concluir a entrega de todos os itens da spec, atualize também o status da Feature correspondente no ADO.
      - Atualize `tasks.md` e `docs/STATE.md`.
+  5. **Fase 5 — Testes E2E com Playwright (Primeira Validação Ponta a Ponta - Opcional, Pergunta Obrigatória)**:
+     - **Pergunta Obrigatória**: Ao final de cada fase de implementação, o agente **deve OBRIGATORIAMENTE sempre perguntar ao usuário**:
+       > *"Deseja executar a fase de testes E2E com Playwright para fazer a primeira validação do que foi implementado?"*
+     - **Natureza Opcional**: A execução dos testes E2E é opcional (o usuário decide se executa ou não), porém **a pergunta feita pelo agente é estritamente mandatória**.
+     - **Se o usuário aceitar**: Execute os testes E2E com **Playwright** (`npx playwright test`) para realizar a primeira validação prática e ponta a ponta da interface e dos fluxos implementados.
+     - **Se o usuário recusar**: Prossiga diretamente para o encerramento da esteira / validação DoD.
 - **Regra Mandatória do Adendo (Bugs e Melhorias em Specs Já Implementadas)**:
   - **Correção e Testes no Código**: O agente nunca deve esquecer de implementar a correção ou melhoria no código, sempre criando/ajustando o teste automatizado correspondente.
   - **Atualização Obrigatória da Documentação da Spec**: O agente **NUNCA deve esquecer de atualizar a documentação da spec já implementada** (`specs/NNNN-<slug>/spec.md`, critérios de aceite e artefatos de domínio/design afetados). O subdocumento em `addenda/` registra o histórico e escopo do adendo, mas a documentação principal da spec mãe DEVE ser mantida viva e fiel ao novo comportamento, preservando a spec como a fonte única da verdade.

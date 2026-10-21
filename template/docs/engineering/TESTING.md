@@ -16,6 +16,7 @@ alwaysApply: false
 | Unidade       | `<comando>`               | sempre, rápido |
 | Integração    | `<comando>`               | adapters / repos / contratos |
 | Aceite (UAT)  | `<comando>`               | um teste por `AC-N` da spec |
+| E2E           | `npx playwright test`     | final da implementação (pergunta obrigatória) |
 | Lint / format    | `<comando>`               | pré-commit / CI |
 | Análise estática | `<comando>` (type-check, complexidade, SAST) | CI — sem findings bloqueantes |
 | Cobertura        | `<comando>` (mín. `<X>%`, gera relatório) | CI — relatório anexado ao PR |
@@ -25,6 +26,9 @@ alwaysApply: false
 - **Estratégia de Execução (Cirúrgica vs Completa)**:
   - **Durante o desenvolvimento**: Rodar **apenas os testes do que foi desenvolvido** (arquivo/teste específico da tarefa/AC). É proibido rodar a suíte inteira a cada passo para não desperdiçar tempo e recursos.
   - **Ao concluir todo o desenvolvimento**: Apenas quando todas as tarefas da spec/lote estiverem implementadas, executar a **suíte de testes completa** para validação geral de regressão.
+- **Testes E2E com Playwright (Pergunta Obrigatória ao Final da Implementação)**:
+  - Ao final de cada fase de implementação, o agente deve **obrigatoriamente perguntar ao usuário**: *"Deseja executar a fase de testes E2E com Playwright para fazer a primeira validação do que foi implementado?"*.
+  - A execução é opcional (a critério do usuário), mas a realização da pergunta é estritamente obrigatória.
 - **Cada `AC-N` da spec tem um teste de aceite que é o seu gate.** Nomeie o teste com o ID
   (`test_AC_1_*` / `AC-1: ...`) para rastreabilidade spec → teste.
 - Domínio não sobe infra; integração usa `<testcontainer / mock de borda>`.

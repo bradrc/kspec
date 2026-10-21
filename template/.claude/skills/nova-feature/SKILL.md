@@ -80,7 +80,14 @@ Para cada artefato do tier, rascunhe a partir do template e **pare no gate para 
   - Ao concluir cada task em `tasks.md`, o agente deve **atualizar o status do respectivo Work Item no ADO** (ex.: `Done` / `Closed`).
   - Ao finalizar todos os itens da feature, atualizar o status da Feature no ADO.
 
-## Fase 6 — Validação (UAT), Suíte Completa & Encerramento do Ciclo
+## Fase 6 — Testes E2E com Playwright (Primeira Validação Ponta a Ponta)
+- **Pergunta Obrigatória**: Ao final de cada fase de implementação, o agente deve **obrigatoriamente perguntar ao usuário**:
+  > *"Deseja executar a fase de testes E2E com Playwright para fazer a primeira validação do que foi implementado?"*
+- **Natureza Opcional**: A execução é opcional (a critério do usuário), mas a realização da pergunta é mandatória.
+- **Se o usuário aceitar**: Execute os testes E2E com **Playwright** (`npx playwright test`) para validar o fluxo ponta a ponta e o comportamento da interface do que foi construído.
+- **Se o usuário recusar**: Prossiga diretamente para a Fase 7.
+
+## Fase 7 — Validação Final (UAT), Suíte Completa & Encerramento do Ciclo
 Após finalizar todo o desenvolvimento, rode a skill **`/validar`**:
 1. **Execução da Suíte Completa**: Somente agora que todo o desenvolvimento terminou, execute a **suíte de testes completa** (`npm test`), verificando regressões gerais, cobertura e análise estática.
 2. Checa o Definition of Done (DoD) e atualiza `docs/STATE.md`.
