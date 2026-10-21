@@ -374,8 +374,10 @@ Clique no botão abaixo para anexar essas tarefas ao \`tasks.md\` da **${targetS
       ];
       const tasks = [
         `Mapear causa raiz e impacto na camada de domínio da spec`,
-        `Aplicar ajuste de '${cleanTitle}' em conformidade com os ACs`,
-        `Executar testes automatizados no gate executável`,
+        `Aplicar ajuste de '${cleanTitle}' em conformidade com os ACs e testes automatizados`,
+        `Atualizar a documentação da spec mãe (spec.md) com o comportamento corrigido`,
+        `Atualizar status no Azure DevOps (ADO) caso haja integração`,
+        `Executar testes automatizados no gate executável (DoD)`,
       ];
 
       const generatedCard = {
@@ -401,7 +403,12 @@ Pela regra da esteira, nenhuma alteração de código pode ser feita sem rastrea
 Identifiquei que esta solicitação é uma **${subTypeLabel}** associada à funcionalidade existente:
 👉 **\`[${generatedCard.parentSpec.code}] ${generatedCard.parentSpec.title}\`** (\`specs/${generatedCard.targetSpecFolder}/\`).
 
-Formulei os critérios de aceite e tarefas como um **Subdocumento (Adendo)** dentro da respectiva spec pai. Clique abaixo para registrar o adendo na esteira antes de codificar:`;
+**Regra Mandatória de Adendo**:
+1. Implementar a correção e testes no código.
+2. **Atualizar obrigatoriamente a documentação da spec mãe** (\`spec.md\`), mantendo-a viva e fiel como fonte da verdade.
+3. **Atualizar o Azure DevOps (ADO)** caso haja integração ativa (fechando os Work Items correspondentes).
+
+Clique abaixo para registrar o adendo na esteira antes de codificar:`;
 
       return {
         sender: "architect",

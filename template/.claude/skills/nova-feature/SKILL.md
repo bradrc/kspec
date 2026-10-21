@@ -9,26 +9,25 @@ Abre e conduz uma feature pela esteira do `README.md`. A **spec é o contrato**;
 ordem dos gates e pare em cada um para review. Siga as convenções do `CLAUDE.md`.
 
 ## Princípios
-- **Pergunte em lotes curtos** com `AskUserQuestion`; ofereça defaults "(Recomendado)". Mas quando a
-  ambiguidade for **profunda e ramificada** (uma decisão depende da outra), troque o lote por uma
-  **sabatina** — rode **`/clarificar`** (uma pergunta por vez, caminhando a árvore) e volte com o
-  entendimento fechado. Especialmente útil nos gates de **design** e **spec**.
+- **Sabatina Obrigatória de Lacunas ANTES de Escrever as Specs**: As lacunas, dúvidas, telas/interfaces, regras de negócio e casos de borda sempre devem ser perguntadas antes de escrever as specs. Nunca assuma ou adivinhe. Execute a sabatina com **`/clarificar`** até que todas as decisões e lacunas estejam sanadas antes de redigir qualquer documento.
+- **Trava de Lote de Specs**: O desenvolvimento de código só é iniciado após **todas as specs do lote estarem concluídas e validadas**.
+- **Trava de Ciclo Fechado**: Quando iniciar a implementação do código, **nenhuma spec nova pode ser escrita**, só depois de implementar e encerrar todas as fases. Quando fechar o ciclo completo, um novo ciclo de fases pode ser iniciado para novas specs.
+- **Pergunta Obrigatória de Integração com ADO**: Antes de transicionar para a fase de testes e código, é mandatória a pergunta sobre integração com o Azure DevOps.
+- **Atualização do ADO na Conclusão de Tasks**: Durante a fase de implementação, ao concluir cada task no projeto (`tasks.md`), o agente deve atualizar imediatamente o status do respectivo Work Item no ADO.
+- **Padrões de Mercado Mandatórios**: Todo código de produção deve respeitar os 7 pilares (SOLID, Clean Architecture, liberação estrita de recursos/DB, tratamento de erros seguro, testes unitários/integração, inspeção prévia e DoD rigoroso).
 - **Não delegue a `spec.md`** — os critérios de aceite são o contrato; o usuário valida.
 - Ações outward-facing (criar issue, publicar) → **confirme antes**.
-- *Tools-aware:* só use um MCP se ele estiver disponível na sessão (`mcp__<servidor>__*`);
-  caso contrário, siga sem ele e registre como pendência.
-- **Trava de conexão:** MCP já ativo não autoriza uso. Confirme **qual conta/workspace** a
-  conexão aponta antes de ler a story, e reconfirme antes de **criar issues** (escrever na conta
-  errada — ex.: Jira pessoal vs do projeto — vaza dado). Use a conexão validada no `/kickoff` se houver.
+- *Tools-aware:* só use um MCP se ele estiver disponível na sessão (`mcp__<servidor>__*`); caso contrário, siga sem ele e registre como pendência.
 
-## Fase 1 — Identidade da feature
+## Fase 1 — Identidade da feature & Levantamento de Lacunas
 1. Calcule o próximo número: maior `NNNN` em `specs/` + 1, com 4 dígitos (ex.: `0002`).
 2. Pergunte um nome curto em kebab-case → pasta `specs/NNNN-<nome>/`.
-3. **(tools-aware) Importar contexto:** se Jira/Linear estiver conectado, pergunte se a feature
+3. **Sabatina de Lacunas (Obrigatória antes da escrita)**:
+   - Levante todas as dúvidas sobre regras de negócio, telas, integrações e comportamentos esperados.
+   - Pergunte ao usuário e feche as lacunas antes de redigir qualquer artefato formal.
+4. **(tools-aware) Importar contexto:** se Jira/Linear estiver conectado, pergunte se a feature
    tem uma story/épico. Se sim, leia a issue e use para semear `product.md`; guarde a chave na
    frontmatter (`jira: PROJ-123`). Se Confluence/Notion estiver conectado, puxe páginas relacionadas.
-   **Se nada de gestão/doc estiver conectado** e o usuário quiser puxar insumo, **ofereça rodar
-   `/integracoes` agora** (neutro — deixe-o dizer o que usa); se recusar, siga sem e registre a pendência.
 
 ## Fase 2 — Decidir o tier
 Pergunte (gate): **"isso introduz decisão difícil de reverter ou nova fronteira de domínio?"**
@@ -48,36 +47,41 @@ Para cada artefato do tier, rascunhe a partir do template e **pare no gate para 
 2. **`design.md`** (arquitetural) — solução + os 5 eixos (stack, arquitetura, infra, qualidade,
    observabilidade) + alternativas/trade-offs/riscos. Decisão difícil de reverter → vira ADR.
    Trade-offs entrelaçados? Rode **`/clarificar`** para sabatinar os ramos antes de fixar a decisão.
-   Se existir o subagente `domain-modeler`/`spec-reviewer`, ofereça delegar a eles.
 3. **`domain.md`** (arquitetural) — bounded context, linguagem ubíqua, agregados, eventos.
    Atualize `docs/glossary.md` e `docs/architecture/context-map.md` se surgirem termos/fronteiras.
 4. **`spec.md`** (sempre) — critérios de aceite em Given/When/Then, casos de borda, fora de escopo.
-   Gate **Definition of Ready**: cada AC é testável e não-ambíguo? **Algum AC ainda vago ou um "como
-   deveria se comportar quando…" em aberto? Rode `/clarificar`** para fechar a árvore antes de gravar.
-   Se houver `spec-reviewer`, use-o.
-   **Regra que combina vários fatores** (flags, estados, modos)? Use a **Matriz de decisão** do
-   template — tabela-verdade é mais densa e barata em tokens que prosa, e cada linha vira teste.
+   Gate **Definition of Ready**: cada AC é testável e não-ambíguo? **Qualquer lacuna restante deve ser sanada com `/clarificar` antes de gravar**.
+   Use a **Matriz de decisão** do template para regras multifatoriais.
 5. **`tasks.md`** (sempre) — decomponha em tasks, cada uma mapeando para um ou mais AC + plano de teste.
 
-## Fase 4 — Quebra de tasks, tracking e Azure DevOps (ADO)
+## Fase 4 — Quebra de tasks, tracking e Pergunta Obrigatória do ADO
 1. Preencha a tabela de `tasks.md` (task → cobre AC → depende de → status).
-2. **Integração Azure DevOps (ADO - Opcional para Novas Features):**
-   - Logo após o DoR e o preenchimento das tasks, o agente pode oferecer a sincronização no ADO (etapa opcional — se recusada, a esteira segue normalmente para a Fase 5).
+2. **Pergunta Obrigatória de Integração com Azure DevOps (ADO)**:
+   - É **mandatório** perguntar ao usuário: *"Deseja sincronizar esta especificação no Azure DevOps (ADO)?"*
    - Se o usuário aceitar, acione o fluxo da skill **`/ado`**:
      - Pergunte qual Epic associar (ou crie um novo).
      - Pergunte o Iteration Path (Sprint).
-     - **Preview Gate Obrigatório:** Exiba a tabela/árvore prévia (Epic → Feature → Tasks) com ACs antes de criar.
-     - Após confirmação, crie no ADO via MCP ou AZ CLI e registre os IDs no frontmatter de `spec.md` e coluna `ADO ID` de `tasks.md`.
-3. **Outras ferramentas (Jira/Linear):** se Jira/Linear estiver conectado, ofereça criar as issues correspondentes.
+     - **Preview Gate Obrigatório:** Exiba a árvore prévia (Epic → Feature → Tasks) com ACs antes de criar.
+     - Crie no ADO via MCP ou AZ CLI e registre os IDs no frontmatter de `spec.md` e coluna `ADO ID` de `tasks.md`.
+   - Se recusado, prossiga sem integração no ADO.
+3. **Trava de Lote**: Só avance para a implementação se **todas as specs do lote atual estiverem concluídas**.
 
-## Fase 5 — Pronto para implementar
-- Cheque o **Definition of Ready** (ver `README.md`): AC testáveis, non-goals, termos no glossário,
-  e — no tier arquitetural — `design.md` aprovado.
-- Resuma com links clicáveis e aponte: implementar respeitando a regra de camadas (`src/README.md`),
-  um teste por AC. Lembre o **Definition of Done** para o merge (AC verdes, ADRs, docs vivas, spec fiel).
-- Se for repositório git e o usuário quiser, ofereça um commit dos artefatos da spec.
+## Fase 5 — Implementação (Ciclo Fechado, TDD e Padrões de Mercado)
+- **Trava de Ciclo Fechado**: Ao iniciar o código, **nenhuma nova spec pode ser escrita** até o fechamento de todas as fases.
+- **TDD Obrigatório com Execução Cirúrgica**:
+  - A primeira tarefa é escrever o teste automatizado para os ACs.
+  - **Execute os testes apenas para o que foi desenvolvido** (arquivo ou teste específico da task). **NÃO rode a suíte completa** durante o desenvolvimento das tarefas individuais.
+- **Padrões de Mercado**:
+  - Aplicar SOLID, DRY, KISS, Clean Code e Clean Architecture/DDD.
+  - Fechamento estrito de conexões e recursos (`using`/`try-with-resources`, connection pooling, queries parametrizadas).
+  - Tratamento de exceções sem silenciamento e segurança em logs/APIs.
+  - Testes unitários e de integração reais.
+- **Atualização Mandatória no ADO**:
+  - Ao concluir cada task em `tasks.md`, o agente deve **atualizar o status do respectivo Work Item no ADO** (ex.: `Done` / `Closed`).
+  - Ao finalizar todos os itens da feature, atualizar o status da Feature no ADO.
 
-## Fase 6 — Validação (UAT)
-Após a implementação (pode ser em outra sessão), rode a skill **`/validar`**: ela roda os gates de
-`docs/engineering/TESTING.md`, mapeia `AC-N → teste`, resolve `SPEC_DEVIATION`, checa o Definition of Done e
-atualiza `docs/STATE.md`. Encerre com `/handoff` se for pausar.
+## Fase 6 — Validação (UAT), Suíte Completa & Encerramento do Ciclo
+Após finalizar todo o desenvolvimento, rode a skill **`/validar`**:
+1. **Execução da Suíte Completa**: Somente agora que todo o desenvolvimento terminou, execute a **suíte de testes completa** (`npm test`), verificando regressões gerais, cobertura e análise estática.
+2. Checa o Definition of Done (DoD) e atualiza `docs/STATE.md`.
+3. Com todas as fases encerradas e o DoD satisfeito, o ciclo é fechado — permitindo a abertura de um novo ciclo de specs.

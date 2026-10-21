@@ -3,17 +3,16 @@ name: clarificar
 description: Use para uma SABATINA — entrevista implacável que transforma intenção difusa em entendimento compartilhado antes de construir. Caminha pela árvore de decisão UMA pergunta por vez, resolvendo dependências entre escolhas, sempre com uma resposta recomendada; explora o codebase/docs em vez de perguntar quando a resposta já existe. Ideal no gate da spec (AC testáveis / Definition of Ready) e do design (decisão difícil de reverter). Produz um resumo de entendimento que alimenta product.md/design.md/spec.md. Chamada por /nova-feature, /kickoff, /roadmap e /validar, ou acione direto com /clarificar.
 ---
 
-# Skill: Clarificar (sabatina de plano/spec)
+# Skill: Clarificar (sabatina de plano/spec e levantamento de lacunas)
 
 Entrevista implacável para **afiar um plano, uma spec ou um design** antes de construir. O alvo é
 **entendimento compartilhado**: nenhuma ambiguidade que vire retrabalho ou `SPEC_DEVIATION` depois.
 Inspirada na técnica de *grilling* — adaptada ao vocabulário da esteira (AC testáveis, tier,
 decisão difícil de reverter → ADR, linguagem ubíqua).
 
-> **Quando usar isto e não "lotes curtos":** o resto da esteira pergunta em **lotes** (`AskUserQuestion`)
-> para escolhas **independentes**. A sabatina é o oposto e o complemento: para uma **árvore de decisão
-> com dependências**, onde a resposta 3 só faz sentido depois das respostas 1 e 2. Use quando a
-> ambiguidade é **profunda e ramificada**, não quando são opções ortogonais.
+> **Regra Mandatória de Lacunas**: **As lacunas sempre devem ser perguntadas antes de escrever as specs**.
+> Nunca adivinhe telas/interfaces, comportamentos esperados, regras de negócio, layouts, integrações ou casos de borda.
+> A sabatina é etapa obrigatória pré-escrita de qualquer spec na esteira SDD.
 
 ## Princípios (o motor)
 - **Uma pergunta por vez.** Faça a pergunta, **espere a resposta**, e só então a próxima. Várias

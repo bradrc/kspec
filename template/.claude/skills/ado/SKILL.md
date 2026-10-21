@@ -8,8 +8,10 @@ description: Use para integrar a esteira SDD com o Azure DevOps (ADO) via MCP Se
 Permite sincronizar os artefatos de especificação da esteira SDD com o Azure DevOps (ADO), mantendo rastreabilidade bidirecional entre o código/spec e os Work Items da nuvem.
 
 ## Princípios de Operação
-- **Escopo Inicial (Apenas Novas Features)**: Neste primeiro momento, a sincronização com o ADO é direcionada exclusivamente para **novas features** (criação da tríade Epic -> Feature -> Tasks). Bugs e melhorias continuam com o fluxo de adendos local.
-- **Integração Totalmente Opcional**: A sincronização com o Azure DevOps **NÃO é obrigatória**. O agente pode oferecer a sincronização, mas se o usuário optar por não enviar, a esteira prossegue imediatamente para o TDD sem nenhum bloqueio.
+- **Escopo Completo (Novas Features e Adendos)**: A sincronização com o ADO atende novas features (Epic -> Feature -> Tasks) e **adendos de correção/melhoria** em specs existentes (Tasks ou Bugs vinculados à Feature pai).
+- **Regra Mandatória de Adendo no ADO**: Em adendos de specs já implementadas, o agente **nunca deve esquecer de fazer a correção no código, atualizar a documentação da spec mãe (`spec.md`) e, havendo integração com o ADO, atualizar os Work Items correspondentes no ADO** (marcando tasks e bugs como `Closed`/`Done`).
+- **Pergunta Obrigatória antes da Fase 3**: A pergunta sobre a sincronização com o Azure DevOps é **OBRIGATÓRIA** antes de avançar para a fase de implementação e após a aprovação de todas as specs. Se o usuário optar por não integrar, a esteira segue para o TDD sem nenhum bloqueio.
+- **Atualização Mandatória de Status na Implementação**: Quando houver integração com o ADO, ao concluir cada tarefa no código e marcá-la em `tasks.md`, o agente **deve obrigatoriamente atualizar o status do respectivo Work Item no ADO** (marcando-o como `Done` ou `Closed`). Ao concluir a spec ou adendo inteiro, deve também atualizar o Work Item correspondente.
 - **Detecção Híbrida**: O agente prioriza o MCP do Azure DevOps se disponível na sessão (`mcp__azure_devops__*`); caso não esteja, utiliza comandos do `az devops` CLI (`az boards work-item`).
 - **Preview Obrigatório (Preview Gate)**: Caso o usuário opte por sincronizar, NUNCA crie itens no ADO sem exibir antes a árvore hierárquica completa e obter a confirmação explícita.
 - **Rastreabilidade**: Os IDs criados são registrados no frontmatter da `spec.md` e na tabela de `tasks.md`.
@@ -122,3 +124,27 @@ Após a criação bem-sucedida, atualize os arquivos do repositório:
 
 3. **`docs/STATE.md`:**
    Registre o ID da Feature e do Epic ativos na sessão.
+
+---
+
+## Passo 6 — Atualização Contínua de Status durante a Implementação
+
+Durante a fase de desenvolvimento/código:
+
+1. **Ao concluir cada Task:**
+   Assim que a tarefa for implementada e o teste passar, marque `[x]` em `tasks.md` e execute a atualização do Work Item no ADO:
+   - **Via MCP Server**:
+     Chame a ferramenta de atualização de Work Item alterando o campo `System.State` para `"Closed"` (ou `"Done"` conforme o processo do projeto).
+   - **Via AZ CLI**:
+     ```bash
+     az boards work-item update --id <TASK_ID> --state "Closed"
+     ```
+
+2. **Ao concluir todos os itens da Feature:**
+   Após a conclusão de todas as tasks e validação do DoD, atualize o Work Item da Feature:
+   - **Via MCP Server**:
+     Atualize o `System.State` da Feature para `"Closed"` (ou `"Done"`).
+   - **Via AZ CLI**:
+     ```bash
+     az boards work-item update --id <FEATURE_ID> --state "Closed"
+     ```

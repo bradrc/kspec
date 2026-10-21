@@ -22,6 +22,9 @@ alwaysApply: false
 
 ## Convenções
 - Pirâmide: muitos testes de unidade, menos de integração, poucos de aceite.
+- **Estratégia de Execução (Cirúrgica vs Completa)**:
+  - **Durante o desenvolvimento**: Rodar **apenas os testes do que foi desenvolvido** (arquivo/teste específico da tarefa/AC). É proibido rodar a suíte inteira a cada passo para não desperdiçar tempo e recursos.
+  - **Ao concluir todo o desenvolvimento**: Apenas quando todas as tarefas da spec/lote estiverem implementadas, executar a **suíte de testes completa** para validação geral de regressão.
 - **Cada `AC-N` da spec tem um teste de aceite que é o seu gate.** Nomeie o teste com o ID
   (`test_AC_1_*` / `AC-1: ...`) para rastreabilidade spec → teste.
 - Domínio não sobe infra; integração usa `<testcontainer / mock de borda>`.

@@ -36,14 +36,97 @@ o índice navegável é `docs/README.md` (mapa do projeto).
   3. **Nova Melhoria**: Identifique a spec dona e conduza para subdocumento em `specs/NNNN-<slug>/addenda/melhoria-<slug>.md`.
   4. **Nova Feature**: Conduza obrigatoriamente para a criação de spec formal em `specs/NNNN-<slug>/spec.md` + `tasks.md`.
 - **Alterações de Código ou Funcionalidade**: Conduza estritamente para o fluxo da esteira seguindo os gates:
-  1. **Fase 1 — Clarificação Obrigatória**: Nunca assuma ou adivinhe telas, regras ou designs. Pergunte ao usuário e alinhe requisitos antes de propor specs. Proibido gerar código nesta fase.
-  2. **Fase 2 — Spec Formal & Gate de Parada (Stop & Wait)**:
+  1. **Fase 1 — Clarificação Obrigatória & Sabatina de Lacunas**:
+     - **As lacunas sempre devem ser perguntadas antes de escrever as specs**. Nunca assuma ou adivinhe telas/interfaces, regras de negócio, layout, integrações ou casos de borda. Faça uma sabatina profunda até eliminar todas as ambiguidades antes de formalizar qualquer documento.
+     - Proibido gerar código nesta fase.
+  2. **Fase 2 — Spec Formal, Fechamento de Lote & Gate de Parada (Stop & Wait)**:
      - Funcionalidade nova → `specs/NNNN-<slug>/spec.md` + `tasks.md`.
      - Bugs e melhorias → Subdocumento (adendo) em `specs/NNNN-<slug>/addenda/<tipo>-<slug>.md` e tarefas no `tasks.md` da spec dona.
-     - **🛑 STOP & WAIT**: Apresente a proposta ao usuário e **PARE O TURNO**. Aguarde a aprovação (Definition of Ready). É expressamente PROIBIDO gerar código de produção no mesmo turno em que a spec foi proposta.
-     - **Sincronização Azure DevOps (ADO - Opcional, apenas novas features)**: Para novas features, logo após a aprovação da spec (Fase 2), o agente pode oferecer/perguntar se deseja sincronizar os itens no Azure DevOps (via MCP ou AZ CLI). Esta etapa é **totalmente opcional**: se o usuário não desejar sincronizar, a esteira segue diretamente para o TDD (Fase 3). Se o usuário optar por sincronizar, o agente pergunta o Epic associado (ou cria novo) e a Iteration Path (Sprint), exibe a pré-visualização completa (Epic → Feature → Tasks com ACs) e aguarda confirmação antes da criação, gravando os IDs no frontmatter da spec (`ado_epic_id`, `ado_feature_id`, `ado_iteration_path`) e na coluna `ADO ID` de `tasks.md`.
-  3. **Fase 3 — TDD Estrito (Test-First)**: Somente após a aprovação da spec, inicie o desenvolvimento. A primeira tarefa é SEMPRE escrever o teste automatizado para os ACs. Nenhuma linha de código de produção é escrita sem o respectivo teste.
-  4. **Fase 4 — Implementação & DoD**: Escreva o código mínimo aderente a DDD/Clean Architecture para fazer os testes passarem (`npm test`). Atualize `tasks.md` e `docs/STATE.md`.
+     - **🛑 STOP & WAIT**: Apresente a proposta ao usuário e **PARE O TURNO**. Aguarde a aprovação explícita (Definition of Ready). É expressamente PROIBIDO gerar código de produção no mesmo turno em que a spec foi proposta.
+     - **Trava de Lote de Specs**: O agente só pode avançar para a Fase 3 (TDD/Implementação) após **todas as specs do lote estarem completamente concluídas e validadas**.
+     - **Pergunta Obrigatória de Integração com Azure DevOps (ADO)**: Após a aprovação de todas as specs do lote e antes de iniciar a Fase 3, é **obrigatório** perguntar ao usuário se deseja integrar/sincronizar os itens no Azure DevOps: *"Deseja sincronizar esta especificação no Azure DevOps (ADO)?"*. Se o usuário aceitar, colete o Epic associado (ou crie um novo) e a Iteration Path (Sprint), exiba a pré-visualização completa (Epic → Feature → Tasks com ACs) e aguarde confirmação antes da criação, gravando os IDs no frontmatter da spec (`ado_epic_id`, `ado_feature_id`, `ado_iteration_path`) e na coluna `ADO ID` de `tasks.md`. Se recusado, prossiga sem integração.
+  3. **Fase 3 — TDD Estrito (Test-First) com Ciclo Fechado**:
+     - **Trava de Ciclo Fechado**: O agente só pode iniciar a escrita de código após a escrita de todas as specs. **Quando iniciar a implementação do código, nenhuma spec nova pode ser escrita**, só depois de implementar e encerrar todas as fases. Quando fechar o ciclo completo, um novo ciclo de fases pode ser iniciado para novas specs.
+     - **TESTE PRIMEIRO**: A primeira tarefa é OBRIGATORIAMENTE escrever o arquivo de teste automatizado cobrindo cada Critério de Aceite (AC).
+     - **Execução Cirúrgica nos Testes**: Durante o desenvolvimento, o agente **deve rodar os testes apenas para o que foi desenvolvido** (arquivo ou teste específico da task/componente), e **NÃO a suíte completa**.
+     - Nenhuma linha de código de produção é escrita sem seu respectivo teste automatizado.
+  4. **Fase 4 — Implementação, Padrões de Mercado & DoD**:
+     - Implemente o código mínimo necessário aderente aos Padrões de Mercado, Clean Architecture e DDD para fazer o teste específico da funcionalidade passar.
+     - **Execução da Suíte Completa Apenas no Fim**: **Apenas quando acabar TODO o desenvolvimento** (todas as tarefas da spec/lote concluídas), o agente deve rodar a **suíte de testes completa** (`npm test`, build e análise estática) para validação integral de regressão antes do fechamento.
+     - **Atualização Mandatória no ADO**: Quando houver integração com o ADO, ao concluir cada task no projeto (`tasks.md`), o agente deve atualizar o status do Work Item correspondente no ADO (marcando-o como `Done` ou `Closed`). Ao concluir a entrega de todos os itens da spec, atualize também o status da Feature correspondente no ADO.
+     - Atualize `tasks.md` e `docs/STATE.md`.
+- **Regra Mandatória do Adendo (Bugs e Melhorias em Specs Já Implementadas)**:
+  - **Correção e Testes no Código**: O agente nunca deve esquecer de implementar a correção ou melhoria no código, sempre criando/ajustando o teste automatizado correspondente.
+  - **Atualização Obrigatória da Documentação da Spec**: O agente **NUNCA deve esquecer de atualizar a documentação da spec já implementada** (`specs/NNNN-<slug>/spec.md`, critérios de aceite e artefatos de domínio/design afetados). O subdocumento em `addenda/` registra o histórico e escopo do adendo, mas a documentação principal da spec mãe DEVE ser mantida viva e fiel ao novo comportamento, preservando a spec como a fonte única da verdade.
+  - **Atualização Mandatória no ADO**: Se houver integração com o Azure DevOps, o agente **deve obrigatoriamente atualizar o ADO** (atualizando o status dos Work Items de bugs, tasks ou feature para `Closed`/`Done`).
+
+## Padrões de Mercado Mandatórios na Fase de Implementação
+
+Todo código-fonte produzido na esteira deve seguir rigorosamente as boas práticas de engenharia de software:
+
+### 1. Princípios de código
+- Aplicar **SOLID, DRY, KISS e Clean Code**.
+- Evitar duplicação de regras de negócio, validações, consultas e cálculos.
+- Seguir o **princípio de responsabilidade única (SRP)**.
+- Utilizar **composição** como abordagem preferencial para reutilização de comportamento.
+- Utilizar **herança** somente quando houver uma relação legítima de especialização.
+- Criar abstrações, interfaces e classes-base apenas quando houver benefício arquitetural concreto.
+- Evitar métodos excessivamente longos, classes com responsabilidades distintas e dependências desnecessárias.
+
+### 2. Arquitetura e responsabilidades
+- Separar adequadamente API/controllers, aplicação/casos de uso, domínio e infraestrutura, conforme a complexidade do projeto.
+- Manter regras de negócio estritamente fora dos controllers e dos detalhes de persistência.
+- Utilizar **injeção de dependência** para gerenciar dependências e seus ciclos de vida.
+- Isolar o acesso a dados quando isso agregar valor à arquitetura.
+- Não introduzir padrões arquiteturais desnecessários ou camadas que apenas repassem chamadas sem agregar responsabilidade.
+
+### 3. Banco de dados e recursos
+- Nunca deixar conexões, comandos, leitores, transações ou outros recursos sem liberação adequada.
+- Em Java, utilizar `try-with-resources` para recursos `AutoCloseable` de propriedade local.
+- Em C#, utilizar `using`/`await using` conforme o tipo de recurso e a API utilizada.
+- Utilizar o `DataSource`, connection pooling ou mecanismo equivalente recomendado pelo framework.
+- Não manter conexões abertas globalmente nem criar pools manualmente sem necessidade justificada.
+- Abrir recursos próximo ao momento de uso e liberá-los assim que possível.
+- Utilizar consultas parametrizadas para prevenir SQL injection.
+- Definir limites transacionais coerentes com os casos de uso.
+- Tratar corretamente rollback, falhas de conexão, timeouts e cancelamentos.
+- Evitar N+1 queries, consultas redundantes e carregamento desnecessário de dados.
+
+### 4. Tratamento de erros e segurança
+- Nunca ignorar exceções silenciosamente.
+- Preservar a causa original dos erros ao encapsulá-los.
+- Não expor stack traces, credenciais ou informações internas ao cliente da API.
+- Validar entradas e aplicar autorização nos pontos apropriados.
+- Não registrar senhas, tokens ou outros dados sensíveis nos logs.
+
+### 5. Testes e qualidade
+- Criar testes unitários para regras de negócio relevantes.
+- Criar testes de integração para persistência, transações e contratos com sistemas externos, conforme necessário.
+- Garantir cobertura dos principais caminhos de sucesso e falha.
+- Não substituir todos os testes de integração por mocks.
+- **Estratégia de execução**: Rodar os testes **apenas para o que foi desenvolvido** durante o ciclo de código; executar a **suíte completa apenas quando acabar todo o desenvolvimento**.
+- Executar compilação, testes e análise estática disponíveis antes de considerar a implementação concluída.
+- Corrigir warnings e problemas relevantes introduzidos pela implementação.
+
+### 6. Processo obrigatório antes de implementar
+- Inspecionar a arquitetura, as convenções e os componentes já existentes.
+- Procurar funcionalidades, classes e métodos reutilizáveis antes de criar novos.
+- Identificar responsabilidades e dependências da funcionalidade.
+- Implementar a solução mais simples que atenda aos requisitos.
+- Verificar ciclo de vida dos recursos, tratamento de exceções, segurança e transações.
+- Adicionar ou atualizar os testes necessários.
+- Revisar o diff para identificar duplicações, código morto, abstrações desnecessárias e regressões.
+
+### 7. Critério de conclusão
+- Não considerar uma funcionalidade concluída apenas porque compila ou funciona no cenário feliz.
+- Antes de concluir, verificar se a implementação:
+  - Respeita os padrões existentes do projeto.
+  - Reutiliza corretamente o código disponível.
+  - Não introduz vazamentos de recursos.
+  - Possui tratamento adequado de falhas.
+  - Tem testes proporcionais ao risco.
+  - Não adiciona complexidade sem necessidade.
+- Se houver conflito entre uma abstração excessiva e uma implementação simples, segura e sustentável, preferir a solução simples, sem comprometer os requisitos arquiteturais.
 
 ## Verificação de conhecimento (nunca invente)
 Antes de afirmar como algo funciona, siga esta ordem — pare assim que tiver a resposta:

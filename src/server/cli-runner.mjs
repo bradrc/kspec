@@ -112,9 +112,17 @@ export class CliRunner extends EventEmitter {
 
     let enrichedPrompt = prompt;
     if (agentType === "dev") {
-      enrichedPrompt = `[DEV AGENT - EXECUÇÃO SDD]\nVocê é o Agente Desenvolvedor da esteira SDD.\n${specPath ? `Consulte a especificação em: ${specPath}\n` : ""}Instrução: ${prompt}\nImplemente o código estritamente aderente aos critérios de aceite (ACs), respeitando as camadas de arquitetura (DDD / Clean Arch) e os testes automatizados.`;
+      enrichedPrompt = `[DEV AGENT - EXECUÇÃO SDD]
+Você é o Agente Desenvolvedor da esteira SDD.
+${specPath ? `Consulte a especificação em: ${specPath}\n` : ""}Instrução: ${prompt}
+Diretrizes Obrigatórias de Implementação:
+1. Padrões de Mercado: SOLID, DRY, KISS, Clean Code e Clean Architecture/DDD.
+2. Recursos e Banco: Liberação estrita de recursos/conexões (using / try-with-resources), pooling, queries parametrizadas (anti SQL Injection), sem N+1.
+3. Tratamento de Erros e Segurança: Não silenciar exceções, preservar causas originais, não vazar traces/tokens.
+4. Testes e Qualidade: Rodar apenas os testes específicos do que foi desenvolvido na tarefa (não rodar a suíte completa durante o desenvolvimento).
+5. Integração ADO: Quando houver integração com o Azure DevOps, atualize o status do Work Item correspondente para Closed/Done ao concluir a task.`;
     } else if (agentType === "qa") {
-      enrichedPrompt = `[QA AGENT - VALIDAÇÃO E GATES SDD]\nVocê é o Agente de QA da esteira SDD.\n${specPath ? `Valide a implementação contra a spec em: ${specPath}\n` : ""}Instrução: ${prompt}\nExecute a suíte de testes automatizados e valide se todos os critérios de aceite (ACs) foram atendidos sem regressão (Definition of Done).`;
+      enrichedPrompt = `[QA AGENT - VALIDAÇÃO E GATES SDD]\nVocê é o Agente de QA da esteira SDD.\n${specPath ? `Valide a implementação contra a spec em: ${specPath}\n` : ""}Instrução: ${prompt}\nExecute a suíte de testes automatizados completa (agora que todo o desenvolvimento foi concluído) e valide se todos os critérios de aceite (ACs) foram atendidos sem regressão (Definition of Done).`;
     } else if (agentType === "architect") {
       enrichedPrompt = `[AI ARCHITECT - SDD HARNESS]\nVocê é o Agente Arquiteto e Harness Master do SDD.\n${prompt}`;
     }
