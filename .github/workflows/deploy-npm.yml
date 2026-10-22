@@ -1,0 +1,62 @@
+name: Deploy NPM
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Publicar no NPM
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Validar integridade do pacote (Smoke Test)
+        run: npm run test:scaffold
+
+      - name: Verificar versão e publicar no NPM
+        id: npm-publish
+        run: |
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "Pacote: $PACKAGE_NAME"
+          echo "Versão local no package.json: $CURRENT_VERSION"
+
+          # Verifica se a versão atual já está publicada no registro NPM
+          REGISTRY_VERSION=$(npm view "$PACKAGE_NAME@$CURRENT_VERSION" version 2>/dev/null || echo "")
+
+          if [ "$REGISTRY_VERSION" = "$CURRENT_VERSION" ]; then
+            echo "A versão $CURRENT_VERSION do pacote $PACKAGE_NAME já foi publicada no NPM. Pulando publicação."
+            echo "published=false" >> $GITHUB_OUTPUT
+          else
+            echo "Nova versão detectada ($CURRENT_VERSION). Publicando no NPM..."
+            npm publish --access public
+            echo "published=true" >> $GITHUB_OUTPUT
+            echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Criar GitHub Release
+        if: steps.npm-publish.outputs.published == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.npm-publish.outputs.version }}
+          name: Release v${{ steps.npm-publish.outputs.version }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

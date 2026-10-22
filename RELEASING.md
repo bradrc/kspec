@@ -1,54 +1,59 @@
-# Release — checklist
+# Release & Publicação Automatizada no NPM
 
-Passos para publicar `@igoruehara/spec-driven` no npm. O GitHub já está publicado;
-isto cobre o npm e a tag de versão.
+Este repositório possui uma esteira contínua via **GitHub Actions** configurada em `.github/workflows/deploy-npm.yml`.
 
-## 0. Pré-requisitos (uma vez)
-- [ ] Conta npm cujo **username é `igoruehara`** (o escopo `@igoruehara` precisa ser seu).
-      Se for outro nome, ajuste `name` no `package.json` para `@<seu-user>/spec-driven`.
-
-## 1. Login e verificação
-```bash
-npm login            # usuário, senha e OTP (2FA)
-npm whoami           # deve retornar: igoruehara
-```
-
-## 2. Conferir o que vai pro pacote
-```bash
-npm run pack:check   # = npm pack --dry-run  → confere os ~42 arquivos (inclui template/.claude)
-npm run test:scaffold # scaffolda numa pasta de teste e valida a CLI
-```
-
-## 3. Versão (semver)
-```bash
-npm version patch    # 0.1.0 → 0.1.1   (use minor/major conforme a mudança)
-```
-> `npm version` cria o commit e a tag `vX.Y.Z` automaticamente.
-
-## 4. Publicar
-```bash
-npm publish                 # access:public já está no package.json
-# se o 2FA pedir código na hora:
-npm publish --otp=123456
-```
-> O `prepublishOnly` roda um smoke test da CLI antes de publicar — se a CLI quebrar, o publish aborta.
-
-## 5. Empurrar tag + release no GitHub
-```bash
-git push --follow-tags
-gh release create v$(node -p "require('./package.json').version") --generate-notes
-```
-
-## 6. Confirmar
-```bash
-npm view @igoruehara/spec-driven version
-npx @igoruehara/spec-driven --help   # ou rode num diretório de teste
-```
+Toda alteração enviada para a branch `main` executa automaticamente a esteira de deploy no NPM.
 
 ---
 
-## Sem npm (alternativa)
-O pacote roda direto do GitHub a qualquer momento:
+## 1. Configuração do Secret no GitHub (Necessário apenas uma vez)
+
+Para que o GitHub Actions tenha permissão para publicar no NPM em nome de `@acaldas12`:
+
+1. No NPM, gere um **Access Token**:
+   - Acesse [npmjs.com](https://www.npmjs.com/) → **Access Tokens** → **Generate New Token**.
+   - Tipo: **Automation** (ou **Granular Access Token** com permissão de Read and Write no escopo `@acaldas12`).
+2. No GitHub:
+   - Acesse o repositório **`bradrc/kspec`** → **Settings** → **Secrets and variables** → **Actions**.
+   - Clique em **New repository secret**.
+   - Nome: `NPM_TOKEN`
+   - Valor: cole o token gerado no NPM.
+
+---
+
+## 2. Fluxo de Publicação Automática (Recomendado)
+
+Quando quiser lançar uma nova versão:
+
+1. Atualize a versão no `package.json` (ou use `npm version`):
+   ```bash
+   npm version patch   # ou minor / major
+   ```
+2. Envie o commit e as tags para a branch `main`:
+   ```bash
+   git push origin main --tags
+   ```
+3. A esteira `.github/workflows/deploy-npm.yml` será disparada:
+   - Executa o smoke test (`npm run test:scaffold`);
+   - Detecta que a versão é nova no NPM;
+   - Publica o pacote `@acaldas12/kspec` automaticamente com `--access public`;
+   - Cria o **GitHub Release** correspondente (`vX.Y.Z`).
+
+> **Nota de Segurança**: Se um push for feito na `main` sem incremento de versão (ex: apenas ajuste de documentação), a esteira detecta que a versão já existe no NPM e pula a etapa de publicação com sucesso, sem quebrar o pipeline.
+
+---
+
+## 3. Publicação Manual Local (Alternativa / Fallback)
+
+Se precisar publicar manualmente do seu terminal:
+
 ```bash
-npx github:igoruehara/spec-driven
+# 1. Conferir arquivos do pacote
+npm run pack:check
+
+# 2. Executar smoke test
+npm run test:scaffold
+
+# 3. Publicar diretamente
+npm publish --access public
 ```

@@ -37,12 +37,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/igoruehara/spec-driven.git"
+    "url": "git+https://github.com/bradrc/kspec.git"
   },
   "bugs": {
-    "url": "https://github.com/igoruehara/spec-driven/issues"
+    "url": "https://github.com/bradrc/kspec/issues"
   },
-  "homepage": "https://github.com/igoruehara/spec-driven#readme",
+  "homepage": "https://github.com/bradrc/kspec#readme",
   "publishConfig": {
     "access": "public"
   },
