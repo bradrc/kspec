@@ -76,9 +76,11 @@ Para cada artefato do tier, rascunhe a partir do template e **pare no gate para 
   - Fechamento estrito de conexões e recursos (`using`/`try-with-resources`, connection pooling, queries parametrizadas).
   - Tratamento de exceções sem silenciamento e segurança em logs/APIs.
   - Testes unitários e de integração reais.
-- **Atualização Mandatória no ADO**:
-  - Ao concluir cada task em `tasks.md`, o agente deve **atualizar o status do respectivo Work Item no ADO** (ex.: `Done` / `Closed`).
-  - Ao finalizar todos os itens da feature, atualizar o status da Feature no ADO.
+- **Atualização Mandatória no ADO (Fechamento em Cascata Ascendente)**:
+  - Ao concluir cada task em `tasks.md`, o agente deve atualizar o status da respectiva Task no ADO (marcando-a como `Done` ou `Closed`).
+  - Se fechar todas as Tasks de uma User Story (US), deve fechar a **User Story** correspondente (`Closed`/`Done`).
+  - Se fechar todas as User Stories de uma Feature, deve fechar a **Feature** correspondente (`Closed`/`Done`).
+  - Se fechar todas as Features de um Epic, deve fechar o **Epic** correspondente (`Closed`/`Done`).
 
 ## Fase 6 — Testes E2E com Playwright (Primeira Validação Ponta a Ponta)
 - **Pergunta Obrigatória**: Ao final de cada fase de implementação, o agente deve **obrigatoriamente perguntar ao usuário**:

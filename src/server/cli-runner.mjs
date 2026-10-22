@@ -120,7 +120,7 @@ Diretrizes Obrigatórias de Implementação:
 2. Recursos e Banco: Liberação estrita de recursos/conexões (using / try-with-resources), pooling, queries parametrizadas (anti SQL Injection), sem N+1.
 3. Tratamento de Erros e Segurança: Não silenciar exceções, preservar causas originais, não vazar traces/tokens.
 4. Testes e Qualidade: Rodar apenas os testes específicos do que foi desenvolvido na tarefa (não rodar a suíte completa durante o desenvolvimento).
-5. Integração ADO: Quando houver integração com o Azure DevOps, atualize o status do Work Item correspondente para Closed/Done ao concluir a task.`;
+5. Integração ADO (Fechamento em Cascata Ascendente): Quando houver integração com o Azure DevOps, atualize a task para Closed/Done. Se fechar todas as tasks de uma US, feche a US; se fechar todas as US de uma Feature, feche a Feature; se fechar todas as Features de um Epic, feche o Epic.`;
     } else if (agentType === "qa") {
       enrichedPrompt = `[QA AGENT - VALIDAÇÃO E GATES SDD]\nVocê é o Agente de QA da esteira SDD.\n${specPath ? `Valide a implementação contra a spec em: ${specPath}\n` : ""}Instrução: ${prompt}\nExecute a suíte de testes automatizados completa (agora que todo o desenvolvimento foi concluído) e valide se todos os critérios de aceite (ACs) foram atendidos sem regressão. Ao final, pergunte obrigatoriamente ao usuário se deseja executar a fase de testes E2E com Playwright para primeira validação ponta a ponta.`;
     } else if (agentType === "architect") {

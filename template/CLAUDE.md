@@ -53,7 +53,10 @@ o índice navegável é `docs/README.md` (mapa do projeto).
   4. **Fase 4 — Implementação, Padrões de Mercado & DoD**:
      - Implemente o código mínimo necessário aderente aos Padrões de Mercado, Clean Architecture e DDD para fazer o teste específico da funcionalidade passar.
      - **Execução da Suíte Completa Apenas no Fim**: **Apenas quando acabar TODO o desenvolvimento** (todas as tarefas da spec/lote concluídas), o agente deve rodar a **suíte de testes completa** (`npm test`, build e análise estática) para validação integral de regressão antes do fechamento.
-     - **Atualização Mandatória no ADO**: Quando houver integração com o ADO, ao concluir cada task no projeto (`tasks.md`), o agente deve atualizar o status do Work Item correspondente no ADO (marcando-o como `Done` ou `Closed`). Ao concluir a entrega de todos os itens da spec, atualize também o status da Feature correspondente no ADO.
+     - **Atualização Mandatória no ADO (Fechamento em Cascata Ascendente)**: Quando houver integração com o ADO, ao concluir cada task no projeto (`tasks.md`), o agente deve atualizar o status da respectiva Task no ADO (marcando-a como `Done` ou `Closed`) e verificar a hierarquia para fechamento em cascata ascendente:
+       - Se fechar todas as Tasks de uma User Story (US), deve fechar a **User Story** correspondente (`Closed`/`Done`);
+       - Se fechar todas as User Stories de uma Feature, deve fechar a **Feature** correspondente (`Closed`/`Done`);
+       - Se fechar todas as Features de um Epic, deve fechar o **Epic** correspondente (`Closed`/`Done`).
      - Atualize `tasks.md` e `docs/STATE.md`.
   5. **Fase 5 — Testes E2E com Playwright (Primeira Validação Ponta a Ponta - Opcional, Pergunta Obrigatória)**:
      - **Pergunta Obrigatória**: Ao final de cada fase de implementação, o agente **deve OBRIGATORIAMENTE sempre perguntar ao usuário**:
